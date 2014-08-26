@@ -23,6 +23,27 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 * Wird nach $Zeit noch nicht bestätigt, wird eine Erinnerung gesendet.
 * Nach zwei Erinnerungen wird der User aus der Aufgabe gestrichen.
 
+== Backend
+
+#:: primary key
+#f:: foreign key
+
+=== Table `User`
+
+mail:: string #
+name:: string
+
+=== Table `Task`
+
+title:: string #
+description:: string
+frequency:: int of seconds
+
+=== Table `TaskXUser` (n:n)
+
+user:: string #f:mail
+task:: string #f:title
+
 
 == Ideen für später
 
