@@ -1,4 +1,4 @@
-= Commitment-System für das Openlab Augsburg
+= Papstehre: Commitment-System für das Openlab Augsburg
 
 **Idee**: Mitglieder sollen sich für eine Aufgabe verpflichten können, daran
 erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht.
@@ -12,3 +12,19 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 * Der Nutzer kann Bestätigen, sobald er die Aufgabe beendet hat.
 * Wird innerhalb eines gewissen Zeitraums nicht bestätigt, wird eine weitere
   Erinnerung geschickt (repeat)
+
+== Praktisch:
+
+* Nutzer meldet sich mit seiner Mailadresse an (und Namen)
+* HTTP-Interface
+* Nutzer sieht Liste mit Aufgaben und können sich verpflichten
+* Wenn Aufgabe fällig wird, wird eine Mail an die Mailadresse gesendet
+* In der Mail ist ein Link, über den man die Erledigung bestätigen kann.
+* Wird nach $Zeit noch nicht bestätigt, wird eine Erinnerung gesendet.
+* Nach zwei Erinnerungen wird der User aus der Aufgabe gestrichen.
+
+
+== Ideen für später
+
+* GPG-Auth
+* Mehrere Nutzer pro Task (können sich ihn aufteilen.)
