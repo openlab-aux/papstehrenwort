@@ -1,0 +1,14 @@
+= Commitment-System für das Openlab Augsburg
+
+**Idee**: Mitglieder sollen sich für eine Aufgabe verpflichten können, daran
+erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht.
+
+== Einfachstmögliche Implementierung:
+
+* Es gibt eine Liste von Aufgaben (die von Admins angelegt wird).
+** Aufgabe: Titel, Beschreibung, nötige Häufigkeit
+* Jeder User kann sich für 0..n Augaben verpflichten
+* Wird die Aufgabe fällig, wird dem Nutzer eine Erinnerung zugeschickt
+* Der Nutzer kann Bestätigen, sobald er die Aufgabe beendet hat.
+* Wird innerhalb eines gewissen Zeitraums nicht bestätigt, wird eine weitere
+  Erinnerung geschickt (repeat)
