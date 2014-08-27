@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<table>
+    <thead>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Frequency</th>
+        <th>Pope</th>
+    </thead>
+    <tbody>
+      {{range $name, $task := .}}
+      <tr>
+          <td>{{$name}}</td>
+          <td>{{$task.Description}}</td>
+          <td>{{$task.Frequency}}</td>
+          <td>{{range $task.Users}}{{or .Name .Address }}{{end}}</td>
+      </tr>
+      {{end}}
+    </tbody>
+</table>
