@@ -12,9 +12,7 @@ import (
 )
 
 
-
 type Task struct {
-	Title       string // id
 	Description string
 	Frequency   time.Duration
 	Users       []User // already a list (future feature)
@@ -37,19 +35,19 @@ func main() {
 	    }
 }
 
-func loadFromJson(file string) *[]Task {
+func loadFromJson(file string) *map[string]Task {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		l := append(make([]Task, 0), Task{"Hello", "This is Olaf.", 100, nil})
+		l := make(map[string]Task)
 		return &l
 	}
-	var tasks []Task
+	var tasks map[string]Task
 	err = json.Unmarshal(b, &tasks)
 	logFatal(err)
 	return &tasks
 }
 
-func saveToJson(file string, tasks *[]Task) {
+func saveToJson(file string, tasks *map[string]Task) {
 	b, err := json.Marshal(tasks)
 	logFatal(err)
 	err = ioutil.WriteFile(file, b, 0644)
