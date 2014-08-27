@@ -1,4 +1,4 @@
-= Papstehre: Commitment-System für das Openlab Augsburg
+= Papstehrenwort: Commitment-System für das Openlab Augsburg
 
 **Idee**: Mitglieder sollen sich für eine Aufgabe verpflichten können, daran
 erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht.
