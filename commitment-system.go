@@ -10,7 +10,6 @@ import (
 	"log"
 	"io/ioutil"
 	"net/http"
-	"html/template"
 )
 
 
@@ -20,11 +19,8 @@ type Task struct {
 	Users       []User // already a list (future feature)
 }
 type User mail.Address
+type TaskList map[string]Task
 
-type globalContext struct {
-	request  chan request
-	response chan map[string]Task
-}
 type request int
 const (
 	allTasks = iota
@@ -32,12 +28,12 @@ const (
 
 func main() {
 
-	ctx := globalContext{
-		request: make(chan request),
-		response: make(chan map[string]Task),
-	}
-	go uiServer(8080, &ctx)
-	go handleGlobalContext(&ctx)
+	file := "tasks.json"
+	tasks := loadFromJson(file)
+	defer saveToJson(file, tasks)
+
+	go uiServer(8080, tasks)
+	// go handleGlobalContext(&ctx)
 
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt)
@@ -47,57 +43,44 @@ func main() {
 	    }
 }
 
-func handleGlobalContext(ctx *globalContext) {
-	file := "tasks.json"
-	tasks := loadFromJson(file)
-	defer saveToJson(file, tasks)
-
-	for {
-		// TODO
-		if req := <-ctx.request; req == allTasks {
-			ctx.response <- map[string]Task{
-				"benis": Task{"huehue", 1337, []User{User{"Spurdo", "spurdo@spärde.de"}}},
-			}
-		}
-	}
-}
-
-func uiServer(port int, ctx *globalContext) {
-	http.HandleFunc("/", ctx.handleHome)
+func uiServer(port int, tasks *TaskList) {
+	http.Handle("/", tasks)
 
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 
 }
 
 
-func (ctx globalContext) handleHome(w http.ResponseWriter, req *http.Request) {
-	// TODO: global generation of the template, once?
+func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
-		t, err := template.ParseFiles("ui_template.html")
-		logFatal(err)
-		ctx.request <- allTasks
-		err = t.Execute(w, <-ctx.response)
+		b, err := json.Marshal(tasks)
+		if err != nil {
+			log.Fatal(err)
+			http.Error(w, "Error encoding JSON.", 500)
+			return
+		}
+		w.Header()["Content-Type"] = []string{"text/json"}
+		w.Write(b)
 	case "POST":
 	}
-	
-	
+
 }
 
 
-func loadFromJson(file string) *map[string]Task {
+func loadFromJson(file string) *TaskList {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		l := make(map[string]Task)
+		l := make(TaskList)
 		return &l
 	}
-	var tasks map[string]Task
+	var tasks TaskList
 	err = json.Unmarshal(b, &tasks)
 	logFatal(err)
 	return &tasks
 }
 
-func saveToJson(file string, tasks *map[string]Task) {
+func saveToJson(file string, tasks *TaskList) {
 	b, err := json.Marshal(tasks)
 	logFatal(err)
 	err = ioutil.WriteFile(file, b, 0644)
