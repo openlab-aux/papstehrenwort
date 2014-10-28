@@ -28,3 +28,4 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 
 * GPG-Auth
 * Mehrere Nutzer pro Task (können sich ihn aufteilen.)
+* Public Shaming Funktion
