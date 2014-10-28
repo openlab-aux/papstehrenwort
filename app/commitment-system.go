@@ -55,7 +55,6 @@ func uiServer(port int, tasks *TaskList) {
 func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
-		log.Print("Hui")
 		w.Header()["Content-Type"] = []string{"text/html"}
 		ts, err := ioutil.ReadFile(tasklist_template)
 		logFatal(err)
