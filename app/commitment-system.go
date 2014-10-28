@@ -1,16 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"time"
-	"net/mail"
 	"encoding/json"
+	"fmt"
+	"html/template"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/mail"
 	"os"
 	"os/signal"
-	"log"
-	"io/ioutil"
-	"net/http"
-	"html/template"
+	"time"
 )
 
 const (
@@ -36,21 +36,20 @@ func main() {
 
 	sig := make(chan os.Signal)
 	signal.Notify(sig, os.Interrupt)
-	    select {
-	    case <-sig:
-		    fmt.Println("\nExiting …")
-	    }
+	select {
+	case <-sig:
+		fmt.Println("\nExiting …")
+	}
 }
 
 func uiServer(port int, tasks *TaskList) {
 	http.Handle("/", tasks)
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
-	    http.ServeFile(w, r, r.URL.Path[1:])
+		http.ServeFile(w, r, r.URL.Path[1:])
 	})
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 
 }
-
 
 func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
@@ -61,12 +60,10 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		t := template.Must(template.New("tasklist").Parse(string(ts)))
 
 		t.Execute(w, tasks)
-		
+
 	case "POST":
 		err := req.ParseForm()
 		// err := json.Unmarshal()
-
-		
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -74,7 +71,6 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 }
-
 
 func loadFromJson(file string) *TaskList {
 	b, err := ioutil.ReadFile(file)
