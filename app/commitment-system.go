@@ -10,8 +10,12 @@ import (
 	"log"
 	"io/ioutil"
 	"net/http"
+	"html/template"
 )
 
+const (
+	tasklist_template = "ui_template.html"
+)
 
 type Task struct {
 	Description string
@@ -20,11 +24,6 @@ type Task struct {
 }
 type User mail.Address
 type TaskList map[string]Task
-
-type request int
-const (
-	allTasks = iota
-)
 
 func main() {
 
@@ -45,7 +44,9 @@ func main() {
 
 func uiServer(port int, tasks *TaskList) {
 	http.Handle("/", tasks)
-
+	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
+	    http.ServeFile(w, r, r.URL.Path[1:])
+	})
 	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 
 }
@@ -54,15 +55,23 @@ func uiServer(port int, tasks *TaskList) {
 func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
-		b, err := json.Marshal(tasks)
-		if err != nil {
-			log.Fatal(err)
-			http.Error(w, "Error encoding JSON.", 500)
-			return
-		}
-		w.Header()["Content-Type"] = []string{"text/json"}
-		w.Write(b)
+		log.Print("Hui")
+		w.Header()["Content-Type"] = []string{"text/html"}
+		ts, err := ioutil.ReadFile(tasklist_template)
+		logFatal(err)
+		t := template.Must(template.New("tasklist").Parse(string(ts)))
+
+		t.Execute(w, tasks)
+		
 	case "POST":
+		err := req.ParseForm()
+		// err := json.Unmarshal()
+
+		
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+		}
 	}
 
 }
@@ -82,6 +91,7 @@ func loadFromJson(file string) *TaskList {
 
 func saveToJson(file string, tasks *TaskList) {
 	b, err := json.Marshal(tasks)
+
 	logFatal(err)
 	err = ioutil.WriteFile(file, b, 0644)
 	logFatal(err)
