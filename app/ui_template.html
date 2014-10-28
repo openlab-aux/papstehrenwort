@@ -1,27 +1,40 @@
 <!DOCTYPE html>
 <head>
-  <link href="/static/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/site.css" rel="stylesheet">
-
-  <script src="/static/jquery.min.js" rel="stylesheet"></script>
-  <meta charset="utf-8">
+	<title>Pabstehrenwort</title>
+	<link href="/static/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/site.css" rel="stylesheet">
+	<script src="/static/jquery.min.js" rel="stylesheet"></script>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <header>
-    <h1>Papstehrenwort</h1>
-    <h2><small>If you don’t do it, who will?</small></h2>
-  </header>
-  <main>
-    <p>Below you see a list of all tasks that should be done regularly. Simply click on those you want to do.</p>
-    <p>test</p>
-	<form action="/" method="post">
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Pabstehrenwort <small>&mdash; If you don't do it, who will?</small></a>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
 		<p>
-			Your Mail Address:<br/>
-			<input type="email" name="email"/>
+		Below you see a list of all <strong>tasks that should be done regularly</strong>.
+		If you want to help, simply fill in your details, <strong>check those you want to do</strong>
+		and click "Commit"!
+		</p>
+		<form action="/" method="post">
+			<p>
+		Your Mail Address:<br/>
+		<input type="email" name="email" class="form-control"/>
 		</p>
 		<p>
-			Your Display Name:<br/>
-			<input type="text" name="name"/>
+		Your Display Name:<br/>
+		<input type="text" name="name" class="form-control"/>
 		</p>
 		<table class="table" id="tasks">
 			<thead>
@@ -44,10 +57,10 @@
 			</tbody>
 		</table>
 		<p>
-			<input type="submit" name="submit" value="Commit"/>
+		<input type="submit" name="submit" value="Commit"/>
 		</p>
 	</form>
-  </main>
-  
-  <script src="static/check-table.js"></script>
+	</div>
+
+	<script src="static/check-table.js"></script>
 </body>
