@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+  <link href="/static/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/site.css" rel="stylesheet">
+
+  <script src="/static/jquery.min.js" rel="stylesheet"></script>
+  <meta charset="utf-8">
+</head>
+<body>
+  <header>
+    <h1>Papstehrenwort</h1>
+    <h2><small>If you don’t do it, who will?</small></h2>
+  </header>
+  <main>
+    <p>Below you see a list of all tasks that should be done regularly. Simply click on those you want to do.</p>
+    <p>test</p>
+  <table class="table" id="tasks">
+    <thead>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Frequency</th>
+      <th>Pope</th>
+      <th>Do?</th>
+    </thead>
+    <tbody>
+      {{range $name, $task := .}}
+      <tr>
+        <td>{{$name}}</td>
+        <td>{{$task.Description}}</td>
+        <td>{{$task.Frequency}}</td>
+        <td>{{range $task.Users}}{{or .Name .Address }}{{end}}</td>
+        <td><input type="checkbox" value="test"></td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+  </main>
+  
+  <script src="static/check-table.js"></script>
+</body>
