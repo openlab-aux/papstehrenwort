@@ -42,7 +42,7 @@ func main() {
 	}
 }
 
-func uiServer(port int, tasks *TaskList) {
+func uiServer(port int, tasks TaskList) {
 	http.Handle("/", tasks)
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
@@ -51,7 +51,7 @@ func uiServer(port int, tasks *TaskList) {
 
 }
 
-func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
 		if req.URL.Path == "/" {
@@ -75,10 +75,11 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				req.Form looks like this:
 				map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
 				*/
-				for taskname, _ := range *tasks {
+				for taskname, _ := range tasks {
 					if req.Form[taskname] != nil {
 						fmt.Println("The User", req.Form["name"][0], "with email", req.Form["email"][0],
 							"commited theirselves the task", taskname)
+						fmt.Println(tasks[taskname])
 					}
 				}
 			}
@@ -89,19 +90,19 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 }
 
-func loadFromJson(file string) *TaskList {
+func loadFromJson(file string) TaskList {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
 		l := make(TaskList)
-		return &l
+		return l
 	}
 	var tasks TaskList
 	err = json.Unmarshal(b, &tasks)
 	logFatal(err)
-	return &tasks
+	return tasks
 }
 
-func saveToJson(file string, tasks *TaskList) {
+func saveToJson(file string, tasks TaskList) {
 	b, err := json.Marshal(tasks)
 
 	logFatal(err)
