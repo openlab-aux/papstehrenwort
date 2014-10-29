@@ -38,6 +38,7 @@ func main() {
 	signal.Notify(sig, os.Interrupt)
 	select {
 	case <-sig:
+		saveToJson(file, tasks)
 		fmt.Println("\nExiting …")
 	}
 }
