@@ -54,18 +54,35 @@ func uiServer(port int, tasks *TaskList) {
 func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
-		w.Header()["Content-Type"] = []string{"text/html"}
-		ts, err := ioutil.ReadFile(tasklist_template)
-		logFatal(err)
-		t := template.Must(template.New("tasklist").Parse(string(ts)))
+		if req.URL.Path == "/" {
+			w.Header()["Content-Type"] = []string{"text/html"}
+			ts, err := ioutil.ReadFile(tasklist_template)
+			logFatal(err)
+			t := template.Must(template.New("tasklist").Parse(string(ts)))
 
-		t.Execute(w, tasks)
+			t.Execute(w, tasks)
+		}
 
 	case "POST":
 		err := req.ParseForm()
-		// err := json.Unmarshal()
-
-		if err != nil {
+		if err == nil {
+			if req.URL.Path == "/commit" {
+				/* What we get via POST:
+				E-Mail: email
+				Name: name
+				each checked task is transmitted as one key
+				(see for-loop below)
+				req.Form looks like this:
+				map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
+				*/
+				for taskname, _ := range *tasks {
+					if req.Form[taskname] != nil {
+						fmt.Println("The User", req.Form["name"][0], "with email", req.Form["email"][0],
+							"commited theirselves the task", taskname)
+					}
+				}
+			}
+		} else {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 	}
