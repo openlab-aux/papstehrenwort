@@ -82,6 +82,7 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 						fmt.Println(tasks[taskname])
 					}
 				}
+				http.Redirect(w, req, "/", http.StatusFound)
 			}
 		} else {
 			http.Error(w, err.Error(), http.StatusBadRequest)
