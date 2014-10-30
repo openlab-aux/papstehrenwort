@@ -18,14 +18,15 @@ watch:
 	cp watch-template watch
 	echo "$(BIN)/coffee --watch -o $(STATIC) app/js/* 2>&1 \
 		| prepend \"coffee\" >> \$$TMP &" >> watch
-	echo "$(GEM_HOME) $(BIN)/sass --watch app/sass:$(STATIC) 2>&1 \
+	echo "$(GEM_HOME) $(BIN)/sass --scss \
+		-I$(BOWER)/bootstrap-sass-official/assets/stylesheets/ \
+		--watch app/sass:$(STATIC) 2>&1 \
 		| prepend \"sass  \" >> \$$TMP &" >> watch
 	echo "tail -f \$$TMP" >> watch
 	chmod +x watch
 
 plumbing:
 	mkdir -p $(STATIC)
-	ln -rsf $(BOWER)/bootstrap/dist/css/bootstrap.min.css $(STATIC)
 	ln -rsf $(BOWER)/jquery/dist/jquery.min.js $(STATIC)
 
 deps: npm gem
@@ -36,4 +37,4 @@ npm:
 	$(NPM_INSTALL) coffee-script
 
 gem:
-	$(GEM_PATH) gem install sass
+	$(GEM_HOME) gem install -N -n $(TEMP)/bin sass
