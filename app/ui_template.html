@@ -1,76 +1,74 @@
 <!DOCTYPE html>
 <head>
-	<title>Pabstehrenwort</title>
-	<link href="/static/bootstrap.min.css" rel="stylesheet">
-	<link href="/static/site.css" rel="stylesheet">
-	<script src="/static/jquery.min.js" rel="stylesheet"></script>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Papstehrenwort</title>
+  <link href="/static/screen.css" rel="stylesheet">
+  <script src="/static/jquery.min.js" rel="stylesheet"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-	<nav class="navbar navbar-default" role="navigation">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">Pabstehrenwort</small></a>
-			</div>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a href="https://github.com/openlab-aux/papstehrenwort">View the Source Code!</a></li>
-			</ul>
+  <!-- <nav class="navbar navbar-default" role="navigation"> -->
+  <!-- 	<div class="container-fluid"> -->
+  <!-- 		<div class="navbar-header"> -->
+  <!-- 			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> -->
+  <!-- 				<span class="sr-only">Toggle navigation</span> -->
+  <!-- 				<span class="icon-bar"></span> -->
+  <!-- 				<span class="icon-bar"></span> -->
+  <!-- 				<span class="icon-bar"></span> -->
+  <!-- 			</button> -->
+  <!-- 			<a class="navbar-brand" href="#">Papstehrenwort</small></a> -->
+  <!-- 		</div> -->
+  <!-- 		<ul class="nav navbar-nav navbar-right"> -->
+  <!-- 			<li><a href="https://github.com/openlab-aux/papstehrenwort">View the Source Code!</a></li> -->
+  <!-- 		</ul> -->
 
-		</div>
-	</nav>
-	<div class="container">
-		<div class="jumbotron">
-			<h1>Pabstehrenwort</h1>
-			<p>
-			If you don't do it, who will? Therefore commit yourself a task!
-			</p>
-		</div>
-		<p>
-		Below you see a list of all <strong>tasks that should be done regularly</strong>.
-		If you want to help, simply fill in your details, <strong>check those you want to do</strong>
-		and click "Commit"!
-		</p>
-		<form action="/commit" method="post">
-			<p>
-			Your Mail Address:<br/>
-			<input type="email" name="email" class="form-control"/>
-			</p>
-			<p>
-			Your Display Name:<br/>
-			<input type="text" name="name" class="form-control"/>
-			</p>
-			<table class="table" id="tasks">
-			<thead>
-				<th>Title</th>
-				<th>Description</th>
-				<th>Frequency</th>
-				<th>Pope</th>
-				<th>Do?</th>
-			</thead>
-			<tbody>
-				{{range $name, $task := .}}
-				<tr>
-					<td>{{$name}}</td>
-					<td>{{$task.Description}}</td>
-					<td>{{$task.Frequency}}</td>
-					<td>{{range $task.Users}}{{or .Name .Address }}{{end}}</td>
-					<td><input type="checkbox" name="{{$name}}" value="do"></td>
-				</tr>
-				{{end}}
-			</tbody>
-		</table>
-		<p>
-		<input type="submit" name="submit" value="Commit"/>
-		</p>
-	</form>
-	</div>
+  <!-- 	</div> -->
+  <!-- </nav> -->
+  <!-- <div class="jumbotron"> -->
+  <main>
+    <header>
+      <h1>Papstehrenwort</h1>
+      <h2><small> If you don't do it, who will?</small></h2>
+    </header>
+    <p>
+      Below you see a list of all <strong>tasks that should be done regularly</strong>.
+      If you want to help, simply fill in your details, <strong>check those you want to do</strong>
+      and click "Commit"!
+    </p>
+    <form action="/commit" method="post">
+      <p>
+	Your Mail Address:<br/>
+	<input type="email" name="email" class="form-control"/>
+      </p>
+      <p>
+	Your Display Name:<br/>
+	<input type="text" name="name" class="form-control"/>
+      </p>
+      <table class="table" id="tasks">
+	<thead>
+	  <th>Title</th>
+	  <th>Description</th>
+	  <th>Frequency</th>
+	  <th>Pope</th>
+	  <th>Do?</th>
+	</thead>
+	<tbody>
+	  {{range $name, $task := .}}
+	  <tr>
+	    <td>{{$name}}</td>
+	    <td>{{$task.Description}}</td>
+	    <td>{{$task.Frequency}}</td>
+	    <td>{{range $task.Users}}{{or .Name .Address }}{{end}}</td>
+	    <td><input type="checkbox" name="{{$name}}" value="do"></td>
+	  </tr>
+	  {{end}}
+	</tbody>
+      </table>
+      <p>
+	<input type="submit" name="submit" value="Commit"/>
+      </p>
+    </form>
+  </main>
 
-	<script src="static/check-table.js"></script>
+  <script src="static/check-table.js"></script>
 </body>
