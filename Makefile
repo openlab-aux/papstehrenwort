@@ -13,12 +13,14 @@ clean:
 	-rm $(STATIC)/jquery.min.js
 	-rm watch
 	-rm -r $(TEMP)
+	-rm -r .sass-cache # cache location of command isn’t working right
 
 watch:
 	cp watch-template watch
-	echo "$(BIN)/coffee --watch -o $(STATIC) app/js/* 2>&1 \
+	echo "$(BIN)/coffee --watch -o $(STATIC) app/js/*.coffee 2>&1 \
 		| prepend \"coffee\" >> \$$TMP &" >> watch
 	echo "$(GEM_HOME) $(BIN)/sass --scss \
+		--cache-location=$(TEMP) \
 		-I$(BOWER)/bootstrap-sass-official/assets/stylesheets/ \
 		--watch app/sass:$(STATIC) 2>&1 \
 		| prepend \"sass  \" >> \$$TMP &" >> watch
