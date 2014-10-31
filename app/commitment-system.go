@@ -80,7 +80,7 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 					if req.Form[taskname] != nil {
 						// TODO: check for existance of the fields
 						fmt.Println("The User", req.Form["name"][0], "with email", req.Form["email"][0],
-							"commited theirselves the task", taskname)
+							"committed themselves to the task", taskname)
 					}
 				}
 				http.Redirect(w, req, "/", http.StatusFound)
