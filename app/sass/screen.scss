@@ -34,7 +34,7 @@ table {
         background-color: #f7f7f9;
     }
 
-    .selected {
+    .selected, .selected:hover {
         @extend .bg-info
     }
 }
