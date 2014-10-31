@@ -76,11 +76,11 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				req.Form looks like this:
 				map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
 				*/
-				for taskname, _ := range *tasks {
+				for taskname, task := range *tasks {
 					if req.Form[taskname] != nil {
-						// TODO: check for existance of the fields
-						fmt.Println("The User", req.Form["name"][0], "with email", req.Form["email"][0],
-							"committed themselves to the task", taskname)
+						if req.Form["name"] != nil && req.Form["email"] != nil {
+							// adding foo, stay tuned
+						}
 					}
 				}
 				http.Redirect(w, req, "/", http.StatusFound)
