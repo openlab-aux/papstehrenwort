@@ -1,0 +1,40 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "bootstrap";
+
+body {
+    margin: 0 200px
+    }
+    
+main {
+    > * {
+        margin-top: 2em;
+    }
+
+}
+
+header {
+    text-align: center;
+
+    h2 {
+        margin: 0 0 1em 0;
+    }
+}
+
+p {
+    text-align: center;
+}
+
+table {
+
+    tbody tr:hover {
+        background-color: #f7f7f9;
+    }
+
+    .selected {
+        @extend .bg-info
+    }
+}
