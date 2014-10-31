@@ -2,3 +2,4 @@ watch
 tmp/
 app/static/
 .sass-cache/
+*~
