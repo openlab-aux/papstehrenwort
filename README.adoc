@@ -39,4 +39,9 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 
 make:: Abhängigkeiten installieren (lokal)
 make clean:: Abhängigkeiten entfernen
-make watch:: Coffescript -> JS & SCSS -> CSS
+make watch:: Skript für Coffescript -> JS & SCSS -> CSS
+
+.Für schnellen Start
+. `make`
+. `./watch`
+. `go run papstehrenwort.go`
