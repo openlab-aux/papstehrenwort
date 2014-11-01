@@ -22,7 +22,7 @@ type User mail.Address
 type TaskList map[string]*Task
 
 const (
-	tasklist_template = "templates/index.html"
+	tasklist_template = "templates/tasks.html"
 )
 
 func main() {
