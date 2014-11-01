@@ -13,10 +13,6 @@ import (
 	"time"
 )
 
-const (
-	tasklist_template = "ui_template.html"
-)
-
 type Task struct {
 	Description string
 	Frequency   time.Duration
@@ -24,6 +20,10 @@ type Task struct {
 }
 type User mail.Address
 type TaskList map[string]Task
+
+const (
+	tasklist_template = "ui_template.html"
+)
 
 func main() {
 
@@ -52,13 +52,15 @@ func uiServer(port int, tasks *TaskList) {
 
 }
 
-func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
 		if req.URL.Path == "/" {
 			w.Header()["Content-Type"] = []string{"text/html"}
 			ts, err := ioutil.ReadFile(tasklist_template)
-			logFatal(err)
+			if err != nil {
+				log.Fatal(err)
+			}
 			t := template.Must(template.New("tasklist").Parse(string(ts)))
 
 			t.Execute(w, tasks)
@@ -66,30 +68,30 @@ func (tasks *TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	case "POST":
 		err := req.ParseForm()
-		if err == nil {
-			if req.URL.Path == "/commit" {
-				/* What we get via POST:
-				E-Mail: email
-				Name: name
-				each checked task is transmitted as one key
-				(see for-loop below)
-				req.Form looks like this:
-				map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
-				*/
-				for taskname, task := range *tasks {
-					if req.Form[taskname] != nil {
-						if req.Form["name"] != nil && req.Form["email"] != nil {
-							// adding foo, stay tuned
-						}
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		switch req.URL.Path {
+		case "/commit":
+			/* What we get via POST:
+			E-Mail: email
+			Name: name
+			each checked task is transmitted as one key
+			(see for-loop below)
+			req.Form looks like this:
+			map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
+			*/
+			for taskname, _ := range tasks {
+				if req.Form[taskname] != nil {
+					if req.Form["name"] != nil && req.Form["email"] != nil {
+						// adding foo, stay tuned
 					}
 				}
-				http.Redirect(w, req, "/", http.StatusFound)
 			}
-		} else {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			http.Redirect(w, req, "/", http.StatusFound)
 		}
 	}
-
 }
 
 func loadFromJson(file string) *TaskList {

@@ -1,5 +1,5 @@
 watch
 tmp/
-app/static/
+static/
 .sass-cache/
 *~

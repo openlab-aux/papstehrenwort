@@ -1,6 +1,6 @@
 TEMP = tmp
 BIN = $(TEMP)/bin
-STATIC = app/static
+STATIC = static
 
 BOWER = $(TEMP)/bower
 NPM_INSTALL = PREFIX=$(TEMP) npm install -g
@@ -17,12 +17,12 @@ clean:
 
 watch:
 	cp watch-template watch
-	echo "$(BIN)/coffee --watch -o $(STATIC) app/js/*.coffee 2>&1 \
+	echo "$(BIN)/coffee --watch -o $(STATIC) js/*.coffee 2>&1 \
 		| prepend \"coffee\" >> \$$TMP &" >> watch
 	echo "$(GEM_HOME) $(BIN)/sass --scss \
 		--cache-location=$(TEMP) \
 		-I$(BOWER)/bootstrap-sass-official/assets/stylesheets/ \
-		--watch app/sass:$(STATIC) 2>&1 \
+		--watch sass:$(STATIC) 2>&1 \
 		| prepend \"sass  \" >> \$$TMP &" >> watch
 	echo "tail -f \$$TMP" >> watch
 	chmod +x watch
