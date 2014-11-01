@@ -58,7 +58,7 @@
 	    <td>{{$name}}</td>
 	    <td>{{$task.Description}}</td>
 	    <td>{{$task.Frequency}}</td>
-	    <td>{{range $task.Users}}{{or .Name .Address }}{{end}}</td>
+	    <td>{{range $task.Users}}{{or .Name .Address }} {{end}}</td>
 	    <td><input type="checkbox" name="{{$name}}" value="do"></td>
 	  </tr>
 	  {{end}}
