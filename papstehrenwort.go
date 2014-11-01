@@ -82,13 +82,10 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			req.Form looks like this:
 			map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
 			*/
-			for taskname, _ := range tasks {
+			for taskname, task := range tasks {
 				if req.Form[taskname] != nil {
 					if req.Form["name"] != nil && req.Form["email"] != nil {
-						// adding foo, stay tuned
 						var newPope User
-						task := tasks[taskname]
-
 						newPope.Address = req.Form["email"][0]
 						newPope.Name = req.Form["name"][0]
 						task.Users = append(task.Users, newPope)
