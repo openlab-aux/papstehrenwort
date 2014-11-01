@@ -19,7 +19,7 @@ type Task struct {
 	Users       []User // already a list (future feature)
 }
 type User mail.Address
-type TaskList map[string]Task
+type TaskList map[string]*Task
 
 const (
 	tasklist_template = "ui_template.html"
@@ -87,9 +87,11 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 					if req.Form["name"] != nil && req.Form["email"] != nil {
 						// adding foo, stay tuned
 						var newPope User
+						task := tasks[taskname]
+
 						newPope.Address = req.Form["email"][0]
 						newPope.Name = req.Form["name"][0]
-						tasks[taskname].Users = append(tasks[taskname].Users, newPope)
+						task.Users = append(task.Users, newPope)
 					}
 				}
 			}
@@ -105,7 +107,7 @@ func loadFromJson(file string) TaskList {
 		return l
 	}
 	var tasks TaskList
-	err = json.Unmarshal(b, tasks)
+	err = json.Unmarshal(b, &tasks)
 	logFatal(err)
 	return tasks
 }
