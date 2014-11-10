@@ -23,7 +23,7 @@ type TaskList map[string]*Task
 
 const (
 	tasklist_template = "templates/tasks.html"
-	error_template = "templates/error.html"
+	error_template    = "templates/error.html"
 )
 
 func main() {
@@ -56,7 +56,8 @@ func uiServer(port int, tasks TaskList) {
 func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
-		if req.URL.Path == "/" {
+		switch req.URL.Path {
+		case "/":
 			w.Header()["Content-Type"] = []string{"text/html"}
 			ts, err := ioutil.ReadFile(tasklist_template)
 			if err != nil {
@@ -65,6 +66,9 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			t := template.Must(template.New("tasklist").Parse(string(ts)))
 
 			t.Execute(w, tasks)
+
+		default:
+			http.Error(w, "File not found", 404)
 		}
 
 	case "POST":
@@ -103,6 +107,8 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				t := template.Must(template.New("error").Parse(string(ts)))
 				t.Execute(w, "You did not fill out all needed fields!")
 			}
+		default:
+			http.Error(w, "File not found", 404)
 		}
 	}
 }
