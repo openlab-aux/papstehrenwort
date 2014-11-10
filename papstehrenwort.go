@@ -23,6 +23,7 @@ type TaskList map[string]*Task
 
 const (
 	tasklist_template = "templates/tasks.html"
+	error_template = "templates/error.html"
 )
 
 func main() {
@@ -82,18 +83,27 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			req.Form looks like this:
 			map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
 			*/
-			for taskname, task := range tasks {
-				if req.Form[taskname] != nil {
-					if req.Form["name"] != nil && req.Form["email"] != nil {
+			if req.Form["name"][0] != "" && req.Form["email"][0] != "" {
+				for taskname, task := range tasks {
+					if req.Form[taskname] != nil {
 						var newPope User
 						newPope.Address = req.Form["email"][0]
 						newPope.Name = req.Form["name"][0]
 						task.Users = append(task.Users, newPope)
 					}
 				}
+				http.Redirect(w, req, "/", http.StatusFound)
+			} else {
+				fmt.Println("The user did not fill out all the needed fields")
+				w.Header()["Content-Type"] = []string{"text/html"}
+				ts, err := ioutil.ReadFile(error_template)
+				if err != nil {
+					log.Fatal(err)
+				}
+				t := template.Must(template.New("error").Parse(string(ts)))
+				t.Execute(w, "You did not fill out all needed fields!")
 			}
 		}
-		http.Redirect(w, req, "/", http.StatusFound)
 	}
 }
 
