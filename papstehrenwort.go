@@ -68,7 +68,7 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			t.Execute(w, tasks)
 
 		default:
-			http.Error(w, "File not found", 404)
+			http.Error(w, "File not found", http.StatusNotFound)
 		}
 
 	case "POST":
@@ -108,7 +108,7 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				t.Execute(w, "You did not fill out all needed fields!")
 			}
 		default:
-			http.Error(w, "File not found", 404)
+			http.Error(w, "File not found", http.StatusNotFound)
 		}
 	}
 }
