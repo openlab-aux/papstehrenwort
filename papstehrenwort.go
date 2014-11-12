@@ -148,7 +148,12 @@ func schedule(task *Task, mailConf *mailConfig) {
 				logFatal(err)
 			}
 			log.Printf("Sending mail to %s …", u.Address)
-			log.Printf("This mail:\n%s", string(mail.Bytes()))
+
+			tmpstr, err := mail.Bytes()
+			if err != nil {
+				logFatal(err)
+			}
+			log.Printf("This mail:\n%s", tmpstr)
 			err = mailConf.sendMail(mail)
 			log.Printf("Sent mail!")
 			if err != nil {
