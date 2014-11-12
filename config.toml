@@ -1,0 +1,5 @@
+[mail]
+fromaddress = "dummy@profpatsch.de"
+username = "dummy@profpatsch.de"
+password = "*a<jBw2vdgKz"
+host = "smtprelaypool.ispgateway.de:465"
