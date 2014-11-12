@@ -21,7 +21,7 @@ type Task struct {
 	Description string
 	Frequency   time.Duration
 	Users       []*User
-	Changes     chan<- TaskChange
+	Changes chan<- TaskChange `json:"-"`
 }
 type User mail.Address
 type TaskList map[string]*Task
