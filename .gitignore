@@ -3,3 +3,4 @@ tmp/
 static/
 .sass-cache/
 *~
+config.toml
