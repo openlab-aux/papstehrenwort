@@ -4,6 +4,7 @@ import (
 	"fmt"
 	gmail "github.com/jpoehls/gophermail"
 	"github.com/openlab-aux/papstehrenwort/server"
+	"net/mail"
 	"net/smtp"
 )
 
@@ -16,7 +17,7 @@ type MailConfig struct {
 	FromAddress string
 }
 
-// reminderMail constructs a message to remind the user of a task due task.
+// CreateMail constructs a message to remind the user of a task due task.
 func CreateMail(t *server.Task, u *server.User, fromAddress string) (*gmail.Message, error) {
 	m := new(gmail.Message)
 	if err := m.SetFrom(fromAddress); err != nil {
@@ -40,8 +41,17 @@ Get to it, ninja!
 	return m, nil
 }
 
-// sendMail connects to the SMTP server supplied in mc and sends an email.
+// SendMail connects to the SMTP server supplied in mc and sends an email.
 func (mc *MailConfig) SendMail(msg *gmail.Message) error {
 	auth := smtp.PlainAuth(mc.Identity, mc.Username, mc.Password, mc.Host)
 	return gmail.SendMail(mc.Host+":"+mc.Port, auth, msg)
+}
+
+func (mc *MailConfig) TestMailConfig() error {
+	_, err := mail.ParseAddress(mc.FromAddress)
+	if err != nil {
+		err = fmt.Errorf("config[mail]: malformed fromaddress (" +
+			mc.FromAddress + ")")
+	}
+	return err
 }

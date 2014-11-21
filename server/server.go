@@ -27,7 +27,7 @@ type User mail.Address
 type TaskChange int
 type TaskList map[string]*Task
 
-// uiServer serves the GUI-frontend in which popes can sign up for tasks.
+// UI serves the GUI-frontend in which popes can sign up for tasks.
 func UI(port int, tasks TaskList) {
 	http.Handle("/", tasks)
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
@@ -80,6 +80,9 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				for taskname, task := range tasks {
 					if req.Form[taskname] != nil {
 						var newPope *User
+						//FIXME(lukasepple) check email sanity!
+						//has to be done on server-side, too
+						//(because user input)
 						newPope.Address = req.Form["email"][0]
 						newPope.Name = req.Form["name"][0]
 						task.Users = append(task.Users, newPope)

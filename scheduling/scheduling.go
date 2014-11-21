@@ -19,9 +19,9 @@ func Schedule(task *server.Task, mailConf *reminders.MailConfig) {
 			mail, err := reminders.CreateMail(task, u, fromAddress)
 			log.Printf("Mail created for user %s", u.Name)
 			if err != nil {
-				//TODO: check mail sanity sooner?!
-				//FIXME no fatalities in this module
-				log.Fatal(err)
+				//should not throw any error, since
+				// the config gets checked
+				log.Fatalf("%s\nThis should NEVER trigger!", err)
 			}
 			log.Printf("Sending mail to %s …", u.Address)
 

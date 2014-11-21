@@ -3,8 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	"github.com/openlab-aux/papstehrenwort/reminders"
+	"github.com/openlab-aux/papstehrenwort/config"
 	"github.com/openlab-aux/papstehrenwort/scheduling"
 	"github.com/openlab-aux/papstehrenwort/server"
 	"io/ioutil"
@@ -18,16 +17,14 @@ const (
 	userDeleted
 )
 
-type config struct {
-	Mail reminders.MailConfig
-}
-
-var conf config
+var conf *config.C
 
 func main() {
 	configString, err := ioutil.ReadFile("config.toml")
 	logFatal(err)
-	conf, err := loadConfig(string(configString))
+	conf, err := config.LoadConfig(string(configString))
+	logFatal(err)
+	err = conf.Mail.TestMailConfig()
 	logFatal(err)
 	file := "tasks.json"
 	tasks := loadFromJson(file)
@@ -50,17 +47,6 @@ func main() {
 		saveToJson(file, tasks)
 		fmt.Println("\nExiting …")
 	}
-}
-
-// loadConfig puts the given toml string into a config struct
-func loadConfig(f string) (c *config, err error) {
-	_, err = toml.Decode(f, &c)
-
-	// defaults
-	if c.Mail.Port == "" {
-		c.Mail.Port = "smtp"
-	}
-	return
 }
 
 func loadFromJson(file string) server.TaskList {
