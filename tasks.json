@@ -1,1 +1,1 @@
-{"Maintain Pabstehrenwort":{"Description":"Code, Code!","Frequency":9000000000000,"Users":null},"Bug reporting":{"Description":"Find them and report them","Frequency":1337,"Users":[{"Name":"Profpatsch","Address":"mail@profpatsch.de"}]}}
+{"Bug reporting":{"Description":"Find them and report them","Frequency":1000000000,"Users":[{"Name":"Profpatsch","Address":"test@example.com"}]},"Maintain Pabstehrenwort":{"Description":"Code, Code!","Frequency":9000000000000,"Users":null}}
