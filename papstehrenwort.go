@@ -4,34 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	gmail "github.com/jpoehls/gophermail"
-	"html/template"
+	"github.com/openlab-aux/papstehrenwort/reminders"
+	"github.com/openlab-aux/papstehrenwort/scheduling"
+	"github.com/openlab-aux/papstehrenwort/server"
 	"io/ioutil"
 	"log"
-	"net/http"
-	"net/mail"
-	"net/smtp"
 	"os"
 	"os/signal"
-	"time"
 )
-
-type Task struct {
-	Name        string
-	Description string
-	Frequency   time.Duration
-	Users       []*User
-	Changes     chan<- TaskChange `json:"-"`
-}
-type User mail.Address
-type TaskList map[string]*Task
-
-const (
-	tasklist_template = "templates/tasks.html"
-	error_template    = "templates/error.html"
-)
-
-type TaskChange int
 
 const (
 	userAdded = iota
@@ -39,33 +19,28 @@ const (
 )
 
 type config struct {
-	Mail mailConfig
-}
-type mailConfig struct {
-	Identity    string
-	Username    string
-	Password    string
-	Host        string
-	Port        string
-	FromAddress string
+	Mail reminders.MailConfig
 }
 
 var conf config
 
 func main() {
-	loadConfig("config.toml")
+	configString, err := ioutil.ReadFile("config.toml")
+	logFatal(err)
+	conf, err := loadConfig(string(configString))
+	logFatal(err)
 	file := "tasks.json"
 	tasks := loadFromJson(file)
 	defer saveToJson(file, tasks)
 
-	go uiServer(8080, tasks)
+	go server.UI(8080, tasks)
 	// TODO name in task and tasklist?!
 	// What about duplication?
 	// What about the children‽ Think about the children!
 	// TODO test (mail) config at startup (so errors won’t be thrown after
 	// some time but instantly)
 	for _, t := range tasks {
-		go schedule(t, &conf.Mail)
+		go scheduling.Schedule(t, &conf.Mail)
 	}
 
 	sig := make(chan os.Signal)
@@ -78,158 +53,29 @@ func main() {
 }
 
 // loadConfig puts the given toml string into a config struct
-func loadConfig(f string) (c config, err error) {
-	_, err = toml.Decode(f, c)
+func loadConfig(f string) (c *config, err error) {
+	_, err = toml.Decode(f, &c)
 
 	// defaults
 	if c.Mail.Port == "" {
-		log.Println("yus")
 		c.Mail.Port = "smtp"
 	}
 	return
 }
 
-// uiServer serves the GUI-frontend in which popes can sign up for tasks.
-func uiServer(port int, tasks TaskList) {
-	http.Handle("/", tasks)
-	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, r.URL.Path[1:])
-	})
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
-
-}
-
-// ServeHTTP displays the tasks as a table and offers a form to submit the
-// selection.
-func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	switch req.Method {
-	case "GET":
-		switch req.URL.Path {
-		case "/":
-			w.Header()["Content-Type"] = []string{"text/html"}
-			ts, err := ioutil.ReadFile(tasklist_template)
-			logFatal(err)
-			t := template.Must(template.New("tasklist").Parse(string(ts)))
-
-			t.Execute(w, tasks)
-
-		default:
-			http.Error(w, "File not found", http.StatusNotFound)
-		}
-
-	case "POST":
-		err := req.ParseForm()
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		switch req.URL.Path {
-		case "/commit":
-			/* What we get via POST:
-			E-Mail: email
-			Name: name
-			each checked task is transmitted as one key
-			(see for-loop below)
-			req.Form looks like this:
-			map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
-			*/
-			if req.Form["name"][0] != "" && req.Form["email"][0] != "" {
-				for taskname, task := range tasks {
-					if req.Form[taskname] != nil {
-						var newPope User
-						newPope.Address = req.Form["email"][0]
-						newPope.Name = req.Form["name"][0]
-						task.Users = append(task.Users, newPope)
-					}
-				}
-				http.Redirect(w, req, "/", http.StatusFound)
-			} else {
-				fmt.Println("The user did not fill out all the needed fields")
-				w.Header()["Content-Type"] = []string{"text/html"}
-				ts, err := ioutil.ReadFile(error_template)
-				if err != nil {
-					log.Fatal(err)
-				}
-				t := template.Must(template.New("error").Parse(string(ts)))
-				t.Execute(w, "You did not fill out all needed fields!")
-			}
-		default:
-			http.Error(w, "File not found", http.StatusNotFound)
-		}
-	}
-}
-
-// Schedule tracks a task and sends mails the its popes.
-// TODO: test reminders
-// TODO: changes to users (userAdded, userDeleted)
-func schedule(task *Task, mailConf *mailConfig) {
-	t := time.NewTicker(task.Frequency)
-	for {
-		<-t.C
-		log.Printf("%s fired", task.Name)
-		for _, u := range task.Users {
-			fromAddress := mailConf.FromAddress
-			mail, err := reminderMail(task, u, fromAddress)
-			log.Printf("Mail created for user %s", u.Name)
-			if err != nil {
-				//TODO: check mail sanity sooner?!
-				logFatal(err)
-			}
-			log.Printf("Sending mail to %s …", u.Address)
-
-			err = mailConf.sendMail(mail)
-			if err != nil {
-				//TODO
-				logFatal(err)
-			}
-			log.Printf("Sent mail!")
-		}
-	}
-}
-
-// sendMail connects to the SMTP server supplied in mc and sends an email.
-func (mc *mailConfig) sendMail(msg *gmail.Message) error {
-	auth := smtp.PlainAuth(mc.Identity, mc.Username, mc.Password, mc.Host)
-	return gmail.SendMail(mc.Host+":"+mc.Port, auth, msg)
-}
-
-// reminderMail constructs a message to remind the user of a task due task.
-func reminderMail(t *Task, u *User, fromAddress string) (*gmail.Message, error) {
-	m := new(gmail.Message)
-	if err := m.SetFrom(fromAddress); err != nil {
-		return nil, err
-	}
-	if err := m.AddTo(u.Address); err != nil {
-		return nil, err
-	}
-	//TODO list email headers (http://www.jamesshuggins.com/h/web1/list-email-headers.htm)
-	//TODO Prefix config option
-	m.Subject = fmt.Sprintf("Task Due: %s", t.Name)
-	//TODO Generate mail text from a text/template
-	m.Body = fmt.Sprintf(`Hya, %s!
-The following task needs to be done as soon as possible:
-
-%s
-%s
-
-Get to it, ninja!
-`, u.Name, t.Name, t.Description)
-	return m, nil
-}
-
-func loadFromJson(file string) TaskList {
+func loadFromJson(file string) server.TaskList {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		l := make(TaskList)
+		l := make(server.TaskList)
 		return l
 	}
-	var tasks TaskList
+	var tasks server.TaskList
 	err = json.Unmarshal(b, &tasks)
 	logFatal(err)
 	return tasks
 }
 
-func saveToJson(file string, tasks TaskList) {
+func saveToJson(file string, tasks server.TaskList) {
 	b, err := json.Marshal(tasks)
 
 	logFatal(err)
