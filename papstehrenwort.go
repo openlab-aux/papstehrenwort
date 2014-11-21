@@ -52,11 +52,7 @@ type mailConfig struct {
 var conf config
 
 func main() {
-	// FIXME: Add config file
-	configFile := "config.toml"
-	_, err := toml.DecodeFile(configFile, &conf)
-	logFatal(err)
-
+	loadConfig("config.toml")
 	file := "tasks.json"
 	tasks := loadFromJson(file)
 	defer saveToJson(file, tasks)
@@ -78,6 +74,18 @@ func main() {
 		saveToJson(file, tasks)
 		fmt.Println("\nExiting …")
 	}
+}
+
+// loadConfig puts the given toml string into a config struct
+func loadConfig(f string) (c config, err error) {
+	_, err = toml.Decode(f, c)
+
+	// defaults
+	if c.Mail.Port == "" {
+		log.Println("yus")
+		c.Mail.Port = "smtp"
+	}
+	return
 }
 
 // uiServer serves the GUI-frontend in which popes can sign up for tasks.
