@@ -21,7 +21,7 @@ type Task struct {
 	Description string
 	Frequency   time.Duration
 	Users       []*User
-	Changes chan<- TaskChange `json:"-"`
+	Changes     chan<- TaskChange `json:"-"`
 }
 type User mail.Address
 type TaskList map[string]*Task
@@ -45,6 +45,7 @@ type mailConfig struct {
 	Username    string
 	Password    string
 	Host        string
+	Port        string
 	FromAddress string
 }
 
@@ -149,17 +150,12 @@ func schedule(task *Task, mailConf *mailConfig) {
 			}
 			log.Printf("Sending mail to %s …", u.Address)
 
-			tmpstr, err := mail.Bytes()
-			if err != nil {
-				logFatal(err)
-			}
-			log.Printf("This mail:\n%s", tmpstr)
 			err = mailConf.sendMail(mail)
-			log.Printf("Sent mail!")
 			if err != nil {
 				//TODO
 				logFatal(err)
 			}
+			log.Printf("Sent mail!")
 		}
 	}
 }
@@ -167,7 +163,7 @@ func schedule(task *Task, mailConf *mailConfig) {
 // sendMail connects to the SMTP server supplied in mc and sends an email.
 func (mc *mailConfig) sendMail(msg *gmail.Message) error {
 	auth := smtp.PlainAuth(mc.Identity, mc.Username, mc.Password, mc.Host)
-	return gmail.SendMail(mc.Host, auth, msg)
+	return gmail.SendMail(mc.Host+":"+mc.Port, auth, msg)
 }
 
 // reminderMail constructs a message to remind the user of a task due task.
