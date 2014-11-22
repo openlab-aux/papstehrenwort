@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/openlab-aux/papstehrenwort/config"
+	"github.com/openlab-aux/papstehrenwort/reminders"
 	"github.com/openlab-aux/papstehrenwort/scheduling"
 	"github.com/openlab-aux/papstehrenwort/server"
 	"io/ioutil"
@@ -31,13 +32,14 @@ func main() {
 	defer saveToJson(file, tasks)
 
 	go server.UI(8080, tasks)
-	// TODO name in task and tasklist?!
-	// What about duplication?
-	// What about the children‽ Think about the children!
-	// TODO test (mail) config at startup (so errors won’t be thrown after
-	// some time but instantly)
+
 	for _, t := range tasks {
-		go scheduling.Schedule(t, &conf.Mail)
+		rem, _ := scheduling.Schedule(t)
+		go func(t *server.Task) {
+			fmt.Println("foo")
+			<-rem
+			sendReminder(t, conf.Mail)
+		}(t)
 	}
 
 	sig := make(chan os.Signal)
@@ -46,6 +48,28 @@ func main() {
 	case <-sig:
 		saveToJson(file, tasks)
 		fmt.Println("\nExiting …")
+	}
+}
+
+func sendReminder(t *server.Task, mc reminders.MailConfig) {
+	for _, u := range t.Users {
+		fromAddress := mc.FromAddress
+		mail, err := reminders.CreateMail(t, u, fromAddress)
+		log.Printf("Mail created for user %s", u.Name)
+		if err != nil {
+			//should not throw any error, since
+			// the config gets checked
+			log.Fatalf("%s\nThis should NEVER trigger!", err)
+		}
+		log.Printf("Sending mail to %s …", u.Address)
+
+		err = mc.SendMail(mail)
+		if err != nil {
+			//TODO retry?
+			//FIXME
+			log.Fatal(err)
+		}
+		log.Printf("Sent mail!")
 	}
 }
 
