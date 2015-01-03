@@ -2,4 +2,4 @@
 fromaddress = "dummy@example.com"
 username = "dummy"
 password = "somepass"
-host = "sslsmtp.myprovider.com:465"
+host = "sslsmtp.myprovider.com"
