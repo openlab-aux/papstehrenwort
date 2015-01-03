@@ -39,13 +39,32 @@ type Task struct {
 	Frequency   time.Duration
 	Users       []*User
 }
+type TaskList []*Task
 type User mail.Address
-type TaskChange int
-type TaskList map[string]*Task
+type TaskChange struct {
+	Kind int
+	Val  User
+}
+
+const (
+	UserAdded = iota
+	UserDeleted
+	StopScheduling
+)
+
+/* Points to the data the UI needs to access (but NOT modify!) */
+type UIInformation struct {
+	Tasks TaskList
+	Input chan UserInput
+}
+type UserInput struct {
+	User  User
+	Tasks map[*Task]bool
+}
 
 // UI serves the GUI-frontend in which popes can sign up for tasks.
-func UI(port int, tasks TaskList) {
-	http.Handle("/", tasks)
+func UI(port int, inf UIInformation) {
+	http.Handle("/", inf)
 	http.HandleFunc("/static/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, r.URL.Path[1:])
 	})
@@ -55,13 +74,13 @@ func UI(port int, tasks TaskList) {
 
 // ServeHTTP displays the tasks as a table and offers a form to submit the
 // selection.
-func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (uiInfo UIInformation) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
 		switch req.URL.Path {
 		case "/":
 			w.Header()["Content-Type"] = []string{"text/html"}
-			// FIXME only load once
+			// TODO only load once
 			ts, err := ioutil.ReadFile(tasklist_template)
 			if err != nil {
 				// FIXME: no fatalities in this module!
@@ -70,13 +89,16 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 			t := template.Must(template.New("tasklist").Parse(string(ts)))
 
-			t.Execute(w, tasks)
+			t.Execute(w, uiInfo.Tasks)
 
 		default:
 			http.Error(w, "File not found", http.StatusNotFound)
 		}
 
 	case "POST":
+		var b []byte
+		_, _ = req.Body.Read(b)
+		panic(fmt.Sprintf("%#v", b))
 		err := req.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -92,18 +114,25 @@ func (tasks TaskList) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			req.Form looks like this:
 			map[name:[sternenseemann] Foobar:[do] submit:[Commit] email:[foo@foo.de]]
 			*/
+			// ok_n, name := req.Form["name"]
+			// ok_e, form := req.Form["email"]
+			fmt.Print(req.Form["name"])
 			if req.Form["name"][0] != "" && req.Form["email"][0] != "" {
-				for taskname, task := range tasks {
-					if req.Form[taskname] != nil {
-						var newPope *User
-						//FIXME(lukasepple) check email sanity!
-						//has to be done on server-side, too
-						//(because user input)
-						newPope.Address = req.Form["email"][0]
-						newPope.Name = req.Form["name"][0]
-						task.Users = append(task.Users, newPope)
-					}
+				var newPope User
+				//FIXME(lukasepple) check email sanity!
+				//has to be done on server-side, too
+				//(because user input)
+				newPope.Address = req.Form["email"][0]
+				newPope.Name = req.Form["name"][0]
+				input := UserInput{
+					User:  newPope,
+					Tasks: make(map[*Task]bool, len(uiInfo.Tasks)),
 				}
+				for _, task := range uiInfo.Tasks {
+					input.Tasks[task] = (req.Form[task.Name] != nil)
+
+				}
+				uiInfo.Input <- input
 				http.Redirect(w, req, "/", http.StatusFound)
 			} else {
 				fmt.Println("The user did not fill out all the needed fields")

@@ -71,13 +71,13 @@ along with Papstehrenwort.  If not, see <http://www.gnu.org/licenses/>.
 	  <th>Do?</th>
 	</thead>
 	<tbody>
-	  {{range $name, $task := .}}
+	  {{range $index, $task := .}}
 	  <tr>
-	    <td>{{$name}}</td>
+	    <td>{{$task.Name}}</td>
 	    <td>{{$task.Description}}</td>
 	    <td>{{$task.Frequency}}</td>
 	    <td>{{range $task.Users}}{{or .Name .Address }} {{end}}</td>
-	    <td><input type="checkbox" name="{{$name}}" value="do"></td>
+	    <td><input type="checkbox" name="{{$task.Name}}" value="do"></td>
 	  </tr>
 	  {{end}}
 	</tbody>

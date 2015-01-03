@@ -23,19 +23,39 @@ import (
 	"time"
 )
 
-func TestScheduling(t *testing.T) {
-	tick := 5 * time.Millisecond //5ms should be enough
-	task := &server.Task{
+func task(freq time.Duration) *server.Task {
+	if freq == 0 {
+		freq = time.Hour
+	}
+	return &server.Task{
 		Name:        "something",
 		Description: "",
-		Frequency:   tick,
+		Frequency:   freq,
 		Users:       []*server.User{},
 	}
-	rem, _ := Schedule(task)
+}
 
-	// test scheduling multiple times
-	for i := 0; i < 5; i++ {
-		timer := time.After(tick + tick/10)
+func TestSchedulingStop(t *testing.T) {
+	ts := task(time.Second)
+	rem, chg := Schedule(ts)
+	close(chg)
+	select {
+	case _, open := <-rem:
+		if open {
+			t.Error("chg was not closed")
+		}
+	case <-time.After(5 * time.Millisecond):
+		t.Error("should be stopped by now")
+	}
+}
+
+func TestSchedulingMultipleTimes(t *testing.T) {
+	//5ms should be enough
+	tick := 5 * time.Millisecond
+	rem, _ := Schedule(task(tick))
+	n := 5
+	for i := 0; i < n; i++ {
+		timer := time.After(tick + time.Duration(int(tick)/(n+1)))
 		select {
 		case <-timer:
 			t.Errorf("task wasn’t scheduled after %s", tick)
@@ -43,5 +63,18 @@ func TestScheduling(t *testing.T) {
 			continue
 		}
 	}
-
 }
+
+// func TestUserAdding(t *testing.T) {
+// 	user := server.User{Name: "spurdo", Address: "spurdo@example.com"}
+// 	cfg <- server.TaskChange{Kind: server.UserAdded, Val: user}
+// }
+
+// func TestUserDeleting(t *testing.T) {
+// 	// TODO construct user here?
+// 	rem, chg := Schedule(task(0))
+// 	userdel := TaskChange{Kind: server.UserAdded, Val: }
+// }
+
+// func TestLastUserDeleted(t *testing.T) {
+// }

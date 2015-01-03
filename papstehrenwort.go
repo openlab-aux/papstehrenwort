@@ -30,11 +30,6 @@ import (
 	"os/signal"
 )
 
-const (
-	userAdded = iota
-	userDeleted
-)
-
 var conf *config.C
 
 func main() {
@@ -48,7 +43,9 @@ func main() {
 	tasks := loadFromJson(file)
 	defer saveToJson(file, tasks)
 
-	go server.UI(8080, tasks)
+	inputc := make(chan server.UserInput)
+	uiInfo := server.UIInformation{Tasks: tasks, Input: inputc}
+	go server.UI(8080, uiInfo)
 
 	for _, t := range tasks {
 		rem, _ := scheduling.Schedule(t)
@@ -93,7 +90,9 @@ func sendReminder(t *server.Task, mc reminders.MailConfig) {
 func loadFromJson(file string) server.TaskList {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
-		l := make(server.TaskList)
+		//TODO which length?
+		length := 10
+		l := make(server.TaskList, length)
 		return l
 	}
 	var tasks server.TaskList

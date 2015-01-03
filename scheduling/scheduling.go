@@ -25,24 +25,28 @@ import (
 	"time"
 )
 
-type Reminder int
-
-const (
-	due = iota
-)
+type Reminder struct {
+	//TODO what information is needed?
+}
 
 // Schedule tracks a task, accepts changes to it and returns reminders
 // on a channel.
 // TODO: changes to users (userAdded, userDeleted)
 func Schedule(task *server.Task) (<-chan Reminder, chan<- server.TaskChange) {
 	rem := make(chan Reminder)
+	chg := make(chan server.TaskChange)
 	go func() {
 		for {
-			<-time.After(task.Frequency)
-			rem <- due
+			select {
+			case _, open := <-chg:
+				if !open {
+					close(rem)
+					return
+				}
+			case <-time.After(task.Frequency):
+				rem <- Reminder{}
+			}
 		}
 	}()
-	return rem, nil
-
-	// FIXME needs to be inside another module
+	return rem, chg
 }

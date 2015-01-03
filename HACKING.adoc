@@ -1,0 +1,20 @@
+This document describes how Papstehrenwort work internally.
+
+.Assumptions
+* TaskList doesn’t change over program execution (is loaded in the beginning)
+
+
+   +-------------+
+   |     UI      |
+   +-------------+
+         |
+        inp
+         |
+         v
+    +----------+
+    |   Main   |
+    +----------
+
+.UI
+* User commits address and list of tasks he wants to do
+* Sends that information to the channel inp
