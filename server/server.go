@@ -37,7 +37,7 @@ type Task struct {
 	Name        string
 	Description string
 	Frequency   time.Duration
-	Users       []*User
+	Users       []User
 }
 type TaskList []*Task
 type User mail.Address
@@ -98,7 +98,6 @@ func (uiInfo UIInformation) ServeHTTP(w http.ResponseWriter, req *http.Request) 
 	case "POST":
 		var b []byte
 		_, _ = req.Body.Read(b)
-		panic(fmt.Sprintf("%#v", b))
 		err := req.ParseForm()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -117,6 +116,7 @@ func (uiInfo UIInformation) ServeHTTP(w http.ResponseWriter, req *http.Request) 
 			// ok_n, name := req.Form["name"]
 			// ok_e, form := req.Form["email"]
 			fmt.Print(req.Form["name"])
+			// FIXME(lukasepple) it is possible to crush PE with a POST!!!
 			if req.Form["name"][0] != "" && req.Form["email"][0] != "" {
 				var newPope User
 				//FIXME(lukasepple) check email sanity!

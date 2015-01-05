@@ -19,6 +19,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/openlab-aux/papstehrenwort/config"
 	"github.com/openlab-aux/papstehrenwort/reminders"
@@ -28,29 +29,36 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"reflect"
 )
 
 var conf *config.C
 
 func main() {
+	// load config
 	configString, err := ioutil.ReadFile("config.toml")
 	logFatal(err)
 	conf, err := config.LoadConfig(string(configString))
 	logFatal(err)
 	err = conf.Mail.TestMailConfig()
 	logFatal(err)
+
+	// load data
 	file := "tasks.json"
 	tasks := loadFromJson(file)
 	defer saveToJson(file, tasks)
 
+	// setup UI
 	inputc := make(chan server.UserInput)
 	uiInfo := server.UIInformation{Tasks: tasks, Input: inputc}
 	go server.UI(8080, uiInfo)
+	// react on user input
+	// only place the user list is modified
+	go applyUserInput(&tasks, inputc)
 
 	for _, t := range tasks {
 		rem, _ := scheduling.Schedule(t)
 		go func(t *server.Task) {
-			fmt.Println("foo")
 			<-rem
 			sendReminder(t, conf.Mail)
 		}(t)
@@ -68,7 +76,7 @@ func main() {
 func sendReminder(t *server.Task, mc reminders.MailConfig) {
 	for _, u := range t.Users {
 		fromAddress := mc.FromAddress
-		mail, err := reminders.CreateMail(t, u, fromAddress)
+		mail, err := reminders.CreateMail(*t, u, fromAddress)
 		log.Printf("Mail created for user %s", u.Name)
 		if err != nil {
 			//should not throw any error, since
@@ -85,6 +93,52 @@ func sendReminder(t *server.Task, mc reminders.MailConfig) {
 		}
 		log.Printf("Sent mail!")
 	}
+}
+
+// applyUserInput applies the changes made by user input to the TaskList.
+// The user is added or removed from the tasks he specified
+func applyUserInput(tasks *server.TaskList, inpc chan server.UserInput) {
+	modTask := func(inpTask *server.Task, inpUser server.User, active bool) error {
+		taskExists := false
+		for _, task := range *tasks {
+			if inpTask == task {
+				taskExists = true
+				userExists := false
+				newUsers := task.Users
+				for i, user := range newUsers {
+
+					if reflect.DeepEqual(inpUser, user) {
+						userExists = true
+						if !active {
+							u := task.Users
+							// delete from slice
+							u = u[:i+copy(u[i:], u[i+1:])]
+						}
+						break
+					}
+				}
+				task.Users = newUsers
+				if active && !userExists {
+					u := task.Users
+					u = append(u, inpUser)
+				}
+				break
+			}
+		}
+		if !taskExists {
+			return errors.New("task does not exist")
+		}
+		return nil
+	}
+	for {
+		select {
+		case inp := <-inpc:
+			for task, active := range inp.Tasks {
+				modTask(task, inp.User, active)
+			}
+		}
+	}
+
 }
 
 func loadFromJson(file string) server.TaskList {

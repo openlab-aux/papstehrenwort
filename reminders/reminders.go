@@ -35,7 +35,7 @@ type MailConfig struct {
 }
 
 // CreateMail constructs a message to remind the user of a task due task.
-func CreateMail(t *server.Task, u *server.User, fromAddress string) (*gmail.Message, error) {
+func CreateMail(t server.Task, u server.User, fromAddress string) (*gmail.Message, error) {
 	m := new(gmail.Message)
 	if err := m.SetFrom(fromAddress); err != nil {
 		return nil, err
