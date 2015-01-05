@@ -12,9 +12,21 @@ This document describes how Papstehrenwort work internally.
          |
          v
     +----------+
-    |   Main   |
-    +----------
+    |   Main   +-----------
+    +----------+
+       ^   ^
+       |   |
+    config task
 
 .UI
 * User commits address and list of tasks he wants to do
 * Sends that information to the channel inp
+
+.Main
+* Initialize program (config)
+* Read tasks
+* Handle new user input
+* Send due notifications to users signed up
+
+.Scheduling
+* 

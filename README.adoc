@@ -15,9 +15,11 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 
 == Praktisch:
 
-* Nutzer meldet sich mit seiner Mailadresse an (und Namen)
 * HTTP-Interface
-* Nutzer sieht Liste mit Aufgaben und können sich verpflichten
+** Nutzer gibt Mailadresse ein
+** Nutzer sieht Liste mit Aufgaben und kann sich verpflichten (wählt Aufgaben aus)
+** Kann Anzeigenamen angeben
+** Klickt Commit, wenn er fertig ist
 * Wenn Aufgabe fällig wird, wird eine Mail an die Mailadresse gesendet
 * In der Mail ist ein Link, über den man die Erledigung bestätigen kann.
 * Wird nach $Zeit noch nicht bestätigt, wird eine Erinnerung gesendet.
@@ -29,6 +31,7 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 * GPG-Auth
 * Mehrere Nutzer pro Task (können sich ihn aufteilen.)
 * Public Shaming Funktion
+* Taskscheduling über Programmneustarts hinweg fortführen
 
 
 == Rumbasteln
