@@ -37,7 +37,7 @@ type Task struct {
 	Name        string
 	Description string
 	Frequency   time.Duration
-	Users       map[string]User
+	Users       []User
 }
 
 // Maps from mailaddresses to address objects

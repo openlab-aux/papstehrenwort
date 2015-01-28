@@ -100,11 +100,10 @@ func applyUserInput(tasks []*server.Task, inpc chan server.UserInput) {
 		for _, task := range tasks {
 			if inpTask == task {
 				taskExists = true
-				// insert or delete user
 				if active {
-					task.Users[inpUser.Address] = inpUser
+					task.Users = append(task.Users, inpUser)
 				} else {
-					delete(task.Users, inpUser.Address)
+					task.Users = ensureUserNotElement(task.Users, inpUser)
 				}
 				break
 			}
@@ -123,6 +122,19 @@ func applyUserInput(tasks []*server.Task, inpc chan server.UserInput) {
 		}
 	}
 
+}
+
+// ensureNotElement removes a User from a list where each user only appears
+// at max one time.
+func ensureUserNotElement(l []server.User, user server.User) []server.User {
+	for i, el := range l {
+		if user == el {
+			// Some slicing magic for deleting element
+			l = l[:i+copy(l[i:], l[i+1:])]
+			break
+		}
+	}
+	return l
 }
 
 func loadFromJson(file string) []*server.Task {
