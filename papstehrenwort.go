@@ -19,7 +19,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/openlab-aux/papstehrenwort/config"
 	"github.com/openlab-aux/papstehrenwort/reminders"
@@ -29,7 +28,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"reflect"
 )
 
 var conf *config.C
@@ -54,7 +52,7 @@ func main() {
 	go server.UI(8080, uiInfo)
 	// react on user input
 	// only place the user list is modified
-	go applyUserInput(&tasks, inputc)
+	go applyUserInput(tasks, inputc)
 
 	for _, t := range tasks {
 		rem, _ := scheduling.Schedule(t)
@@ -68,7 +66,6 @@ func main() {
 	signal.Notify(sig, os.Interrupt)
 	select {
 	case <-sig:
-		saveToJson(file, tasks)
 		fmt.Println("\nExiting …")
 	}
 }
@@ -95,40 +92,27 @@ func sendReminder(t *server.Task, mc reminders.MailConfig) {
 	}
 }
 
-// applyUserInput applies the changes made by user input to the TaskList.
+// applyUserInput applies the changes made by user input to the []Task.
 // The user is added or removed from the tasks he specified
-func applyUserInput(tasks *server.TaskList, inpc chan server.UserInput) {
-	modTask := func(inpTask *server.Task, inpUser server.User, active bool) error {
+func applyUserInput(tasks []*server.Task, inpc chan server.UserInput) {
+	modTask := func(inpTask *server.Task, inpUser server.User, active bool) {
 		taskExists := false
-		for _, task := range *tasks {
+		for _, task := range tasks {
 			if inpTask == task {
 				taskExists = true
-				userExists := false
-				newUsers := task.Users
-				for i, user := range newUsers {
-
-					if reflect.DeepEqual(inpUser, user) {
-						userExists = true
-						if !active {
-							u := task.Users
-							// delete from slice
-							u = u[:i+copy(u[i:], u[i+1:])]
-						}
-						break
-					}
-				}
-				task.Users = newUsers
-				if active && !userExists {
-					u := task.Users
-					u = append(u, inpUser)
+				// insert or delete user
+				if active {
+					task.Users[inpUser.Address] = inpUser
+				} else {
+					delete(task.Users, inpUser.Address)
 				}
 				break
 			}
 		}
 		if !taskExists {
-			return errors.New("task does not exist")
+			panic("task does not exist")
 		}
-		return nil
+		return
 	}
 	for {
 		select {
@@ -141,21 +125,22 @@ func applyUserInput(tasks *server.TaskList, inpc chan server.UserInput) {
 
 }
 
-func loadFromJson(file string) server.TaskList {
+func loadFromJson(file string) []*server.Task {
 	b, err := ioutil.ReadFile(file)
 	if err != nil {
 		//TODO which length?
 		length := 10
-		l := make(server.TaskList, length)
+		l := make([]*server.Task, length)
 		return l
 	}
-	var tasks server.TaskList
+	var tasks []*server.Task
 	err = json.Unmarshal(b, &tasks)
 	logFatal(err)
 	return tasks
 }
 
-func saveToJson(file string, tasks server.TaskList) {
+func saveToJson(file string, tasks []*server.Task) {
+	fmt.Println(tasks)
 	b, err := json.Marshal(tasks)
 
 	logFatal(err)

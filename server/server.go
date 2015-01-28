@@ -37,10 +37,13 @@ type Task struct {
 	Name        string
 	Description string
 	Frequency   time.Duration
-	Users       []User
+	Users       map[string]User
 }
-type TaskList []*Task
+
+// Maps from mailaddresses to address objects
+type UserMap map[string]User
 type User mail.Address
+
 type TaskChange struct {
 	Kind int
 	Val  User
@@ -54,7 +57,7 @@ const (
 
 /* Points to the data the UI needs to access (but NOT modify!) */
 type UIInformation struct {
-	Tasks TaskList
+	Tasks []*Task
 	Input chan UserInput
 }
 type UserInput struct {

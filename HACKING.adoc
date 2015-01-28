@@ -1,4 +1,4 @@
-This document describes how Papstehrenwort work internally.
+This document describes how Papstehrenwort works internally.
 
 .Assumptions
 * TaskList doesn’t change over program execution (is loaded in the beginning)

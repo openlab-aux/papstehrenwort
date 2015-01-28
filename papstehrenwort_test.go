@@ -2,31 +2,38 @@ package main
 
 import (
 	"github.com/openlab-aux/papstehrenwort/server"
-	"reflect"
 	"testing"
 )
 
+const (
+	address = "test@suplto.de"
+)
+
 func TestApplyUserInput(t *testing.T) {
-	task := &server.Task{
-		Users: make([]server.User, 1),
-	}
-	user := server.User{}
-	tasks := server.TaskList{task}
+	user := server.User{Address: address}
+	task := &server.Task{Users: make(map[string]server.User)}
+
+	task.Users[address] = user
+	tasks := []*server.Task{task}
 	inpc := make(chan server.UserInput)
-	go applyUserInput(&tasks, inpc)
+
+	go applyUserInput(tasks, inpc)
 	inpc <- server.UserInput{User: user, Tasks: map[*server.Task]bool{task: true}}
-	tmp := tasks[0].Users
-	if len(tmp) < 1 || !reflect.DeepEqual(tmp[0], user) {
-		t.Error("User not in tasklist")
+	users := tasks[0].Users
+
+	if len(users) < 1 || !(users[address] == user) {
+		t.Errorf("User %s not in tasklist", user)
 	}
 }
 
 func TestApplyUserInputNoNewUser(t *testing.T) {
-	task := new(server.Task)
-	user := server.User{}
-	tasks := server.TaskList{task}
+	user := server.User{Address: address}
+	task := &server.Task{Users: make(map[string]server.User)}
+	tasks := []*server.Task{task}
 	inpc := make(chan server.UserInput)
-	go applyUserInput(&tasks, inpc)
+
+	go applyUserInput(tasks, inpc)
+
 	inpc <- server.UserInput{User: user, Tasks: map[*server.Task]bool{task: false}}
 	tmp := tasks[0].Users
 	if len(tmp) > 0 {
