@@ -32,19 +32,3 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 * Mehrere Nutzer pro Task (können sich ihn aufteilen.)
 * Public Shaming Funktion
 * Taskscheduling über Programmneustarts hinweg fortführen
-
-
-== Rumbasteln
-
-.Abhängigkeiten
-    * npm (node.js)
-    * gem (ruby)
-
-make:: Abhängigkeiten installieren (lokal)
-make clean:: Abhängigkeiten entfernen
-make watch:: Skript für Coffescript -> JS & SCSS -> CSS
-
-.Für schnellen Start
-. `make`
-. `./watch`
-. `go run papstehrenwort.go`

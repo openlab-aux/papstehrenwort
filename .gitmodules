@@ -1,0 +1,6 @@
+[submodule "frontend/bootstrap"]
+	path = frontend/bootstrap
+	url = git@github.com:twbs/bootstrap.git
+[submodule "frontend/bootstrap-sass"]
+	path = frontend/bootstrap-sass
+	url = git@github.com:twbs/bootstrap-sass.git
