@@ -32,3 +32,13 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 * Mehrere Nutzer pro Task (können sich ihn aufteilen.)
 * Public Shaming Funktion
 * Taskscheduling über Programmneustarts hinweg fortführen
+
+== TODO
+
+* Weniger Frontend dependencies
+** Alles, was wir mit node.js installieren müssen nützt am Ende wenig
+** CoffeeScript ist überflüssig
+** Bower können wir durch submodules ersetzen
+* Welches Webframework soll verwendet werden?
+** servant? Nachteil: Nur API
+** Yesod? Nachteil: relativ groß
