@@ -40,5 +40,11 @@ erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht
 ** CoffeeScript ist überflüssig
 ** Bower können wir durch submodules ersetzen
 * Welches Webframework soll verwendet werden?
-** servant? Nachteil: Nur API
-** Yesod? Nachteil: relativ groß
+** http://www.stackage.org/package/wai[Plain WAI]
+** Sinatra-like:
+*** http://hackage.haskell.org/package/miku[miku]
+*** http://hackage.haskell.org/package/scotty[Scotty]
+*** https://www.spock.li/[Spock]
+** http://snapframework.com/[Snap]
+** http://www.yesodweb.com/[Yesod]
+** http://www.happstack.com/page/view-page-slug/1/happstack[Happstack]
