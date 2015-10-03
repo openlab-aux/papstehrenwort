@@ -21,5 +21,9 @@ executable papstehrenwort
   -- other-extensions:    
   build-depends:       base
                      , smtp-mail
+                     , servant
+                     , servant-server
+                     , servant-blaze
+                     , clay
   -- hs-source-dirs:      
   default-language:    Haskell2010
