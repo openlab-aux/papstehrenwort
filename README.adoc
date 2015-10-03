@@ -31,6 +31,8 @@ A frequency specifies how often a task must be done. We need a representation th
 
 Depending on the frequency the overdue time also must vary. It is to be proposed wether the overdue time must be entered manually or gets calculated automatically.
 
+We propose that a crond's approach should be used since cron offers relatively powerful and generic means of denoting frequencies. For parsing and representation of cron requencies http://hackage.haskell.org/package/cron[cron] could be used.
+
 === Ideas
 
 * GPG- or Client Certificate-Auth
