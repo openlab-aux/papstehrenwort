@@ -1,45 +1,47 @@
-= Papstehrenwort: Commitment-System für das Openlab Augsburg
+= Papstehrenwort: task commitment system for our hackerspace
 
-**Idee**: Mitglieder sollen sich für eine Aufgabe verpflichten können, daran
-erinnert werden und bestätigen, ob sie der Aufgabe nachgegangen sind oder nicht.
+== Idea
+* Members of the space can commit themselves to a task that needs to be done regularly
+* They get notified (via email) everytime when the task is to do
+* After doing the task they enter that information into the system
 
-== Einfachstmögliche Implementierung:
+== Spec
 
-* Es gibt eine Liste von Aufgaben (die von Admins angelegt wird).
-** Aufgabe: Titel, Beschreibung, nötige Häufigkeit
-* Jeder User kann sich für 0..n Augaben verpflichten
-* Wird die Aufgabe fällig, wird dem Nutzer eine Erinnerung zugeschickt
-* Der Nutzer kann Bestätigen, sobald er die Aufgabe beendet hat.
-* Wird innerhalb eines gewissen Zeitraums nicht bestätigt, wird eine weitere
-  Erinnerung geschickt (repeat)
+=== Basic Architecture
 
-== Praktisch:
+* There is a list of tasks created by entitled users / admins. Each task consists of
+** Title
+** Description
+** Frequency
+** Time that a task is overdue after
+* Each user may commit themselves to zero or more tasks
+** Multiple users per task are also possible.
+* Every time a task is to do the user gets notified via email .
+* After they have done the task they can confirm that fact.
+* When the task is overdue another notification will be sent. If the task hasn't been done after it is "double overdue" the user will be disassigned.
 
-* HTTP-Interface
-** Nutzer gibt Mailadresse ein
-** Nutzer sieht Liste mit Aufgaben und kann sich verpflichten (wählt Aufgaben aus)
-** Kann Anzeigenamen angeben
-** Klickt Commit, wenn er fertig ist
-* Wenn Aufgabe fällig wird, wird eine Mail an die Mailadresse gesendet
-* In der Mail ist ein Link, über den man die Erledigung bestätigen kann.
-* Wird nach $Zeit noch nicht bestätigt, wird eine Erinnerung gesendet.
-* Nach zwei Erinnerungen wird der User aus der Aufgabe gestrichen.
+=== Frequencies
 
+A frequency specifies how often a task must be done. We need a representation that is powerful and means something to users. Therefore we propose a solution based on the human calendar. Valid values would be for example:
 
-== Ideen für später
+* Every two weeks
+* Each month
+* Every two days
+* Every two months
 
-* GPG-Auth
-* Mehrere Nutzer pro Task (können sich ihn aufteilen.)
-* Public Shaming Funktion
-* Taskscheduling über Programmneustarts hinweg fortführen
+Depending on the frequency the overdue time also must vary. It is to be proposed wether the overdue time must be entered manually or gets calculated automatically.
+
+=== Ideas
+
+* GPG- or Client Certificate-Auth
+* Public shaming feature
 
 == TODO
 
-* Weniger Frontend dependencies
-** Alles, was wir mit node.js installieren müssen nützt am Ende wenig
-** CoffeeScript ist überflüssig
-** Bower können wir durch submodules ersetzen
-* Welches Webframework soll verwendet werden?
+* Less frontend dependencies
+** no npm and bower
+** CoffeeScript can be removed?
+* Which webframework shall be used?
 ** http://www.stackage.org/package/wai[Plain WAI]
 ** Sinatra-like:
 *** http://hackage.haskell.org/package/miku[miku]
