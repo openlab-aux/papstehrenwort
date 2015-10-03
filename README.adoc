@@ -50,3 +50,4 @@ Depending on the frequency the overdue time also must vary. It is to be proposed
 ** http://snapframework.com/[Snap]
 ** http://www.yesodweb.com/[Yesod]
 ** http://www.happstack.com/page/view-page-slug/1/happstack[Happstack]
+** http://simple.cx/[Simple]
