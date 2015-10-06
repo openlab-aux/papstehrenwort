@@ -38,18 +38,18 @@ We propose that a crond's approach should be used since cron offers relatively p
 * GPG- or Client Certificate-Auth
 * Public shaming feature
 
+== Implementation
+
+=== Web framework
+
+http://hackage.haskell.org/package/servant-blaze[servant-blaze]
+
+=== Storage
+
+http://www.4store.org[4store], a triplestore, queried using http://hackage.haskell.org/package/hsparql-0.2.6/docs/Database-HSparql-QueryGenerator.html[hsparql].
+
 == TODO
 
 * Less frontend dependencies
 ** no npm and bower
 ** CoffeeScript can be removed?
-* Which webframework shall be used?
-** http://www.stackage.org/package/wai[Plain WAI]
-** Sinatra-like:
-*** http://hackage.haskell.org/package/miku[miku]
-*** http://hackage.haskell.org/package/scotty[Scotty]
-*** https://www.spock.li/[Spock]
-** http://snapframework.com/[Snap]
-** http://www.yesodweb.com/[Yesod]
-** http://www.happstack.com/page/view-page-slug/1/happstack[Happstack]
-** http://simple.cx/[Simple]
