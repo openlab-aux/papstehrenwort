@@ -46,7 +46,7 @@ http://hackage.haskell.org/package/servant-blaze[servant-blaze]
 
 === Storage
 
-http://www.4store.org[4store], a triplestore, queried using http://hackage.haskell.org/package/hsparql-0.2.6/docs/Database-HSparql-QueryGenerator.html[hsparql].
+* sqlite (postgres(t)?)
 
 == TODO
 
