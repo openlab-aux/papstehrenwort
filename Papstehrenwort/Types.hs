@@ -1,16 +1,14 @@
 module Papstehrenwort.Types where
 
-import System.Cron       (CronSchedule ())
-import Network.Mail.Mime (Address ())
+import Protolude
+import Data.Time.Calendar (Day)
+import Network.URL
 
-type Minute = Integer
-data Task = Task {
-    tTitle       :: String
-  , tDescription :: String
-  , tSchedule    :: CronSchedule
-  , tOverdueTime :: Minute
-  , tUsers       :: [User]
-  } deriving (Show, Eq)
+data Task = Task { tTitle :: Text
+                 , tDescription :: Text
+                 , tHow :: Maybe Text
+                 , tUrl :: Maybe URL
+                 , tRecur :: Integer
+                 , tStart :: Day
+                 } deriving (Show, Eq)
 
-data User = User Address
-  deriving (Show, Eq)

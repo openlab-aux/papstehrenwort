@@ -16,18 +16,26 @@ extra-source-files:  README.adoc
 cabal-version:       >=1.10
 
 executable papstehrenwort
-  main-is:             Papstehrenwort.hs
+  main-is:             Main.hs
   -- other-modules:       
-  -- other-extensions:    
+  -- other-extensions:
   build-depends:       base
-                     , smtp-mail
+                     , aeson
+                     , blaze-html
+                     , blaze-markup
+                     , cron
+                     -- , smtp-mail
+                     , lens
                      , servant
                      , servant-server
                      , servant-blaze
-                     , clay
-                     , hashable
-                     , cron
+                     -- , clay
+                     -- , hashable
                      , mime-mail
-                     , hsparql
+                     , url
+                     , time
+                     , protolude
+                     , wai
+                     , warp
   -- hs-source-dirs:      
   default-language:    Haskell2010
