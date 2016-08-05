@@ -1,5 +1,7 @@
 = Papstehrenwort: task commitment system for our hackerspace
 
+This project is currently being rewritten and not yet in a usable state.
+
 == Idea
 * Members of the space can commit themselves to a task that needs to be done regularly
 * They get notified (via email) everytime when the task is to do
