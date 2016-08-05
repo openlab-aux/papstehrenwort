@@ -53,3 +53,8 @@ http://hackage.haskell.org/package/servant-blaze[servant-blaze]
 * Less frontend dependencies
 ** no npm and bower
 ** CoffeeScript can be removed?
+
+== Built by these people
+
+@Profpatsch
+@sternenseemann

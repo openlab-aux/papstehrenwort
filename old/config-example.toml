@@ -1,5 +1,0 @@
-[mail]
-fromaddress = "dummy@example.com"
-username = "dummy"
-password = "somepass"
-host = "sslsmtp.myprovider.com"
