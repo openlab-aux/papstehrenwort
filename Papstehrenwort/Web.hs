@@ -6,12 +6,13 @@ import Servant
 import Servant.Server (serve)
 import Servant.HTML.Blaze (HTML)
 import Data.Time.Calendar
+import Data.Time.Clock (getCurrentTime, utctDay)
 import Network.Wai (Application)
 
 import Papstehrenwort.Types
 import qualified Papstehrenwort.Web.Html as Html
 
-type ApiType = Get '[HTML] [Html.Task]
+type ApiType = Get '[HTML] Html.TaskList
 
 tasks :: [Task]
 tasks = [
@@ -24,7 +25,10 @@ tasks = [
   ]
 
 taskServer :: Server ApiType
-taskServer = pure $ fmap Html.Task tasks
+taskServer = do
+  d <- liftIO $ utctDay <$> getCurrentTime
+  pure $ Html.TaskList { Html.tlTasks = tasks
+                       , Html.tlToday = d }
 
 userApi :: Proxy ApiType
 userApi = Proxy

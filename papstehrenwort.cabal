@@ -17,8 +17,7 @@ cabal-version:       >=1.10
 
 executable papstehrenwort
   main-is:             Main.hs
-  -- other-modules:       
-  -- other-extensions:
+  default-extensions:  NoImplicitPrelude, OverloadedStrings
   build-depends:       base
                      , aeson
                      , blaze-html
