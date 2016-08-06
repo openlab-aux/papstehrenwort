@@ -15,9 +15,10 @@ build-type:          Simple
 extra-source-files:  README.adoc
 cabal-version:       >=1.10
 
-executable papstehrenwort
-  main-is:             Main.hs
+library
   default-extensions:  NoImplicitPrelude, OverloadedStrings
+  exposed-modules:     Papstehrenwort.Web
+                     , Papstehrenwort.Scheduler
   build-depends:       base
                      , aeson
                      , blaze-html
@@ -36,5 +37,27 @@ executable papstehrenwort
                      , protolude
                      , wai
                      , warp
-  -- hs-source-dirs:      
   default-language:    Haskell2010
+
+executable papstehrenwort
+  main-is:             Main.hs
+  build-depends:       base
+                     , papstehrenwort
+                     , warp
+  default-language:    Haskell2010
+
+
+test-suite tests
+  type:                exitcode-stdio-1.0
+  default-extensions:     NoImplicitPrelude
+  main-is:             TestMain.hs
+  build-depends:       base
+                     , papstehrenwort
+                     , tasty
+                     , tasty-hunit
+                     , tasty-smallcheck
+                     , smallcheck 
+                     , protolude
+                     , time
+  default-language:    Haskell2010
+  hs-source-dirs:      tests
