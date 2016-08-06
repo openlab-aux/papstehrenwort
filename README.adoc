@@ -58,5 +58,5 @@ http://hackage.haskell.org/package/servant-blaze[servant-blaze]
 
 == Built by these people
 
-[@Profpatsch] (https://github.com/Profpatsch)
-[@sternenseemann] (https://github.com/sternenseemann)
+@Profpatsch
+@sternenseemann
