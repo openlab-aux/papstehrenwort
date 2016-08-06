@@ -16,9 +16,12 @@ extra-source-files:  README.adoc
 cabal-version:       >=1.10
 
 library
-  default-extensions:  NoImplicitPrelude, OverloadedStrings
+  hs-source-dirs:      src
   exposed-modules:     Papstehrenwort.Web
-                     , Papstehrenwort.Scheduler
+  other-modules:       Papstehrenwort.Scheduler
+                     , Papstehrenwort.Web.Html
+                     , Papstehrenwort.Types
+  default-extensions:  NoImplicitPrelude, OverloadedStrings
   build-depends:       base
                      , aeson
                      , blaze-html
@@ -40,8 +43,10 @@ library
   default-language:    Haskell2010
 
 executable papstehrenwort
+  hs-source-dirs:      .
   main-is:             Main.hs
-  build-depends:       base
+  default-extensions:  NoImplicitPrelude, OverloadedStrings
+  build-depends:       protolude
                      , papstehrenwort
                      , warp
   default-language:    Haskell2010
@@ -49,7 +54,7 @@ executable papstehrenwort
 
 test-suite tests
   type:                exitcode-stdio-1.0
-  default-extensions:     NoImplicitPrelude
+  default-extensions:  NoImplicitPrelude
   main-is:             TestMain.hs
   build-depends:       base
                      , papstehrenwort

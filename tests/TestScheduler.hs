@@ -22,8 +22,8 @@ schedulerTests = testGroup "scheduler tests"
 
 
 data Occurrence = Occ { start :: Integer
-                     , recur :: Natural
-                     , today :: Integer } deriving (Show, Generic)
+                      , recur :: Natural
+                      , today :: Integer } deriving (Show, Generic)
 instance Monad m => Serial m Occurrence
 instance Monad m => Serial m Natural where
   series = generate $ \n -> [1..(fromInteger $ toInteger n)]
