@@ -18,9 +18,10 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Papstehrenwort.Web
-  other-modules:       Papstehrenwort.Scheduler
+                     , Papstehrenwort.Scheduler
                      , Papstehrenwort.Web.Html
                      , Papstehrenwort.Types
+  other-modules:
   default-extensions:  NoImplicitPrelude, OverloadedStrings
   build-depends:       base
                      , aeson
