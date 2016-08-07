@@ -5,6 +5,7 @@ import Protolude
 import Servant
 import Servant.Server (serve)
 import Servant.HTML.Blaze (HTML)
+import Servant.Utils.StaticFiles (serveDirectory)
 import Data.Time.Calendar
 import Data.Time.Clock (getCurrentTime, utctDay)
 import Network.Wai (Application)
@@ -14,6 +15,8 @@ import qualified Papstehrenwort.Web.Html as H
 import qualified Papstehrenwort.I18n as I
 
 type ApiType = Get '[HTML] (H.Translated H.Site)
+          :<|> "js"     :> Raw
+          :<|> "static" :> Raw
 
 tasks :: [Task]
 tasks = [
@@ -26,11 +29,15 @@ tasks = [
   ]
 
 taskServer :: Server ApiType
-taskServer = do
-  d <- liftIO $ utctDay <$> getCurrentTime
-  pure $ H.Trans ( I.fromMarkup <$> I.renderMessage I.Default I.EN
-                    , H.Site $ H.TaskList { H.tlTasks = tasks
-                                          , H.tlToday = d } )
+taskServer =
+  (do
+      d <- liftIO $ utctDay <$> getCurrentTime
+      return $ H.Trans ( I.fromMarkup <$> I.renderMessage I.Default I.EN
+                       , H.Site $ H.TaskList { H.tlTasks = tasks
+                                             , H.tlToday = d } ))
+  -- TODO: don’t use relative paths
+  :<|> serveDirectory "js"
+  :<|> serveDirectory "static" 
 
 userApi :: Proxy ApiType
 userApi = Proxy

@@ -23,13 +23,25 @@ instance ToMarkup (Translated Site) where
       H.head $ do
         H.title $ t I.Title
         H.link ! href "/static/screen.css" ! rel "stylesheet"
-        script ! src "/static/jquery.min.js" $ mempty
         meta ! charset "utf-8"
       body $ do
         main $ do
           header $ do
             h1 $ t I.Title
             h2 . small $ t I.Tagline
+          p $ t I.Introduction
+          H.form ! action "/commit" ! method "post" $ do
+            let inp tag typ n = p $ do
+                  t tag
+                  br
+                  input ! type_ typ ! name n ! class_ "form-control"
+              in do
+                inp I.MailAddress "email" "email"
+                inp I.DisplayName "text" "name"
+            H.div ! id "tasks" $ toMarkup $ Trans (t, sTasks)
+            p $ input ! type_ "submit" ! name "submit" ! value "Commit"
+        script ! src "/static/jquery.min.js" $ mempty
+        script ! src "/js/check-table.js" $ mempty
 
 
 data TaskList = TaskList { tlTasks :: [T.Task]
@@ -51,4 +63,5 @@ instance ToMarkup (Translated TaskList) where
           dat tDescription
           dat $ maybe "" (toS.exportURL) tUrl
           dat . show $ S.nextOccurrence tStart tRecur tlToday
+          td $ input ! type_ "checkbox" ! name "tTitle" ! value "do"
 
