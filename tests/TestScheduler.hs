@@ -34,12 +34,12 @@ nextOcc Occ{..} =
         S.nextOccurrence (ModifiedJulianDay start) recur (ModifiedJulianDay today)
   in next
 
+
 todayBeforeStart, alwaysAfterStart, multipleOfRecur :: TestTree
 
 todayBeforeStart = testCase "if today is before start, the next occurrence should be start"
   $ nextOcc (Occ start 3 0) @?= start
   where start = 5
-
 
 alwaysAfterStart = testProperty "the date is always after the start date"
   $ \o@Occ{..} -> nextOcc o >= start

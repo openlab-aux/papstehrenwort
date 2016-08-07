@@ -10,9 +10,10 @@ import Data.Time.Clock (getCurrentTime, utctDay)
 import Network.Wai (Application)
 
 import Papstehrenwort.Types
-import qualified Papstehrenwort.Web.Html as Html
+import qualified Papstehrenwort.Web.Html as H
+import qualified Papstehrenwort.I18n as I
 
-type ApiType = Get '[HTML] Html.TaskList
+type ApiType = Get '[HTML] (H.Translated H.Site)
 
 tasks :: [Task]
 tasks = [
@@ -27,8 +28,9 @@ tasks = [
 taskServer :: Server ApiType
 taskServer = do
   d <- liftIO $ utctDay <$> getCurrentTime
-  pure $ Html.TaskList { Html.tlTasks = tasks
-                       , Html.tlToday = d }
+  pure $ H.Trans ( I.fromMarkup <$> I.renderMessage I.Default I.EN
+                    , H.Site $ H.TaskList { H.tlTasks = tasks
+                                          , H.tlToday = d } )
 
 userApi :: Proxy ApiType
 userApi = Proxy
