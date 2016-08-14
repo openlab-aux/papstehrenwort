@@ -83,5 +83,21 @@ instance RenderMessage Default UIMessages where
     TaskUrl         -> "Url"
     TaskNextOccur   -> "Next"
 
+instance RenderMessage Default UIMessages where
+  renderMessage _ DE = \case
+    Title           -> "Papstehrenwort"
+    Tagline         -> "Wenn du es nicht tust, wer dann?"
+    Introduction    -> ne [ "Hier siehst du die Liste "
+                          , Str "aller Aufgaben, die regelmäßig erledigt werden müssen", ". "
+                          , "Wenn du helfen willst, gib deine persönlichen Daten an und  "
+                          , Str "markiere die Aufgaben, die du erledigen willst"
+                          , " und drücke “Commit”!" ]
+    MailAddress     -> "Deine Mailadresse:"
+    DisplayName     -> "Dein anzuzeigender Name:"
+    TaskTitle       -> "Titel"
+    TaskDescription -> "Beschreibung"
+    TaskUrl         -> "Url"
+    TaskNextOccur   -> "Nächstes Mal"
+
 ne :: [Markup] -> Markup
 ne = M . NE.fromList
