@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase, MultiParamTypeClasses, FlexibleInstances #-}
+{-# LANGUAGE LambdaCase, MultiParamTypeClasses, FlexibleInstances, InstanceSigs #-}
 module Papstehrenwort.I18n
   ( renderMessage
   , Markup(..), FromMarkup(..)
@@ -7,10 +7,13 @@ module Papstehrenwort.I18n
   ) where
 
 import Protolude
+import Control.Error (note)
 import Data.String (fromString)
 import Data.List.NonEmpty (NonEmpty((:|)), (<|))
 import qualified Data.List.NonEmpty as NE
 import qualified Text.Blaze.Html5 as Blaze
+import Network.HTTP.Media (mapAcceptLanguage)
+import Web.HttpApiData (FromHttpApiData(..))
 
 -- | the 'RenderMessage' is used to provide translations for a message types
 --
@@ -57,6 +60,14 @@ instance FromMarkup Blaze.Html where
 
 data Default = Default
 data Lang = EN | DE
+
+instance FromHttpApiData Lang where
+  parseHeader :: ByteString -> Either Text Lang
+  parseHeader bs = note ("No Lang for '" <> toS bs <> "'.")
+    $ mapAcceptLanguage [ ("de", DE)
+                        , ("en", EN) ] bs
+  parseUrlPiece = parseHeader . toS
+
 data UIMessages = Title
                 | Tagline
                 | Introduction
@@ -66,38 +77,37 @@ data UIMessages = Title
                 | TaskDescription
                 | TaskUrl
                 | TaskNextOccur
+                | CommitButton
 
 instance RenderMessage Default UIMessages where
   renderMessage _ EN = \case
     Title           -> "Papstehrenwort"
     Tagline         -> "If you don’t do it, who will?"
-    Introduction    -> ne [ "Below you see a list of all "
-                          , Str "tasks that should be done regularly", ". "
-                          , "If you want to help, simply fill in your details, "
-                          , Str "check those you want to do"
-                          , " and click “Commit”!" ]
+    Introduction    -> "Below you see a list of all "
+                       <> Str "tasks that should be done regularly" <> ". "
+                       <> "If you want to help, simply fill in your details, "
+                       <> Str "check those you want to do"
+                       <> " and click “" <> renderMessage Default EN CommitButton <> "”!"
     MailAddress     -> "Your Mail Address:"
     DisplayName     -> "Your Display Name:"
     TaskTitle       -> "Title"
-    TaskDescription -> "Descrption"
+    TaskDescription -> "Description"
     TaskUrl         -> "Url"
     TaskNextOccur   -> "Next"
+    CommitButton    -> "Commit"
 
-instance RenderMessage Default UIMessages where
   renderMessage _ DE = \case
     Title           -> "Papstehrenwort"
     Tagline         -> "Wenn du es nicht tust, wer dann?"
-    Introduction    -> ne [ "Hier siehst du die Liste "
-                          , Str "aller Aufgaben, die regelmäßig erledigt werden müssen", ". "
-                          , "Wenn du helfen willst, gib deine persönlichen Daten an und  "
-                          , Str "markiere die Aufgaben, die du erledigen willst"
-                          , " und drücke “Commit”!" ]
+    Introduction    -> "Hier siehst du die Liste "
+                       <> Str "aller Aufgaben, die regelmäßig erledigt werden müssen" <> ". "
+                       <> "Wenn du helfen willst, gib deine persönlichen Daten an und  "
+                       <> Str "markiere die Aufgaben, die du erledigen willst"
+                       <> " und drücke “" <> renderMessage Default DE CommitButton <> "”!"
     MailAddress     -> "Deine Mailadresse:"
-    DisplayName     -> "Dein anzuzeigender Name:"
+    DisplayName     -> "Dein Anzeigename:"
     TaskTitle       -> "Titel"
     TaskDescription -> "Beschreibung"
     TaskUrl         -> "Url"
     TaskNextOccur   -> "Nächstes Mal"
-
-ne :: [Markup] -> Markup
-ne = M . NE.fromList
+    CommitButton    -> "Abschicken"

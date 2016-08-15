@@ -31,8 +31,11 @@ library
                      , blaze-html
                      , blaze-markup
                      , cron
+                     , errors
                      -- , smtp-mail
                      , lens
+                     , http-api-data
+                     , http-media
                      , servant
                      , servant-server
                      , servant-blaze
