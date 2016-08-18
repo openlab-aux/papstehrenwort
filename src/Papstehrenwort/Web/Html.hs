@@ -3,7 +3,6 @@ module Papstehrenwort.Web.Html where
 
 import Protolude as P
 import Data.Time.Calendar (Day)
-import Network.URL (exportURL)
 import Text.Blaze.Html5 as H
 import Text.Blaze.Html5.Attributes as A
 import Text.Blaze (ToMarkup)
@@ -62,7 +61,7 @@ instance ToMarkup (Translated TaskList) where
         mconcat $ flip P.map tlTasks $ \T.Task{..} -> do
           dat tTitle
           dat tDescription
-          dat $ maybe "" (toS.exportURL) tUrl
+          dat $ maybe "" (T.exportURL) tUrl
           dat . show $ S.nextOccurrence tStart tRecur tlToday
           td $ input ! type_ "checkbox" ! name "tTitle" ! value "do"
 

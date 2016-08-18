@@ -51,6 +51,7 @@ instance Monoid Markup where
 class FromMarkup a where
   fromMarkup :: Markup -> a
 
+-- TODO escape HTML in strings
 instance FromMarkup Blaze.Html where
   fromMarkup = \case
     (M  ms) -> mconcat . NE.toList $ fmap fromMarkup ms

@@ -14,9 +14,16 @@ import Papstehrenwort.Types
 import qualified Papstehrenwort.Web.Html as H
 import qualified Papstehrenwort.I18n as I
 
-type ApiType = Header "Accept-Language" I.Lang :> Get '[HTML] (H.Translated H.Site)
+type UI = Header "Accept-Language" I.Lang :> Get '[HTML] (H.Translated H.Site)
+          :<|> "api"    :> API
           :<|> "js"     :> Raw
           :<|> "static" :> Raw
+
+type API = APIcurrent
+           :<|> "v0" :> APIv0
+type APIcurrent = APIv0
+
+type APIv0 = "tasks" :> Get '[JSON] [Task]
 
 tasks :: [Task]
 tasks = [
@@ -28,9 +35,10 @@ tasks = [
        , tStart = ModifiedJulianDay 234 }
   ]
 
-taskServer :: Server ApiType
+taskServer :: Server UI
 taskServer = site
              -- TODO: don’t use relative paths
+             :<|> api
              :<|> serveDirectory "js"
              :<|> serveDirectory "static" 
   where
@@ -40,8 +48,10 @@ taskServer = site
                          (maybe I.EN identity lang))
                        $ H.Site $ H.TaskList { H.tlTasks = tasks
                                              , H.tlToday = d }
+    api = apiv0 :<|> apiv0
+    apiv0 = pure tasks
 
-userApi :: Proxy ApiType
+userApi :: Proxy UI
 userApi = Proxy
 
 app :: Application
