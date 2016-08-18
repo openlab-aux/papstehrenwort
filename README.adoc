@@ -24,16 +24,9 @@ This project is currently being rewritten and not yet in a usable state.
 
 === Frequencies
 
-A frequency specifies how often a task must be done. We need a representation that is powerful and means something to users. Therefore we propose a solution based on the human calendar. Valid values would be for example:
-
-* Every two weeks
-* Each month
-* Every two days
-* Every two months
+Frequencies are given in multiples of days (to keep everything as simple as possible). Input could also make coefficients possible.
 
 Depending on the frequency the overdue time also must vary. It is to be proposed wether the overdue time must be entered manually or gets calculated automatically.
-
-We propose that a crond's approach should be used since cron offers relatively powerful and generic means of denoting frequencies. For parsing and representation of cron requencies http://hackage.haskell.org/package/cron[cron] could be used.
 
 === Ideas
 
@@ -48,13 +41,12 @@ http://hackage.haskell.org/package/servant-blaze[servant-blaze]
 
 === Storage
 
-* sqlite (postgres(t)?)
+* sqlite (postgres(t?))
 
 == TODO
 
 * Less frontend dependencies
 ** no npm and bower
-** CoffeeScript can be removed?
 
 == Built by these people
 
