@@ -50,7 +50,7 @@ data ApiVersions = ApiVersions
 instance ToJSON ApiVersions
 instance ToJSON Semver
 
-
+-- | tmp test task
 tasks :: [Task]
 tasks = [
   Task { tTitle = "test"
@@ -61,6 +61,7 @@ tasks = [
        , tStart = ModifiedJulianDay 234 }
   ]
 
+-- | server implementation
 taskServer :: Server Routes
 taskServer = site
              -- TODO: don’t use relative paths
@@ -70,16 +71,21 @@ taskServer = site
   where
     site lang = do
       d <- liftIO $ utctDay <$> getCurrentTime
-      return $ H.Trans (I.fromMarkup <$> I.renderMessage I.Default
+      return $ H.Trans (
+        -- render markup to HTML
+        I.fromMarkup <$> I.renderMessage I.Default
+                         -- translate according to browser settings
                          (maybe I.EN identity lang))
                        $ H.Site $ H.TaskList { H.tlTasks = tasks
                                              , H.tlToday = d }
     api = (pure apiVersions) :<|> apiv0
     apiv0 = pure tasks
 
+-- | api proxy
 userApi :: Proxy Routes
 userApi = Proxy
 
+-- | servant WAI application
 app :: Application
 app = serve userApi taskServer
 

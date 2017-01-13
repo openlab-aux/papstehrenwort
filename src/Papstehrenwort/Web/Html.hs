@@ -12,11 +12,14 @@ import qualified Papstehrenwort.Types as T
 import qualified Papstehrenwort.Scheduler as S
 import qualified Papstehrenwort.I18n as I
 
-
+-- | Data the site needs to display its contents
 data Site = Site { sTasks :: TaskList }
 
+-- | A Translated thing is something that has a function which
+--   can display localized messages in some varying rendered markup
 data Translated a = Trans (∀ t. I.FromMarkup t => I.UIMessages -> t) a
 
+-- note that ToMarkup comes from blaze, while FromMarkup is a local class
 instance ToMarkup (Translated Site) where
   toMarkup (Trans t Site{..}) =
     docTypeHtml $ do

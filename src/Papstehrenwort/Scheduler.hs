@@ -5,6 +5,7 @@ import Data.Time.Calendar (Day, diffDays, addDays)
 
 data SchedState = SchedState { _today :: Day }
 
+-- | Return date of next occurence
 nextOccurrence :: Day     -- ^ starting date
                -> Integer -- ^ recurrence in days
                -> Day     -- ^ current date

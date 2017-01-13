@@ -7,7 +7,7 @@ import qualified Network.URL as U
 import Data.Aeson (ToJSON(..), FromJSON(..))
 
 
--- | we wrap the @U.URL@ type because it works with Text
+-- | We wrap the @U.URL@ type because it works with Text
 --   and does not provide aeson instances
 newtype URL = URL U.URL deriving (Eq, Show, Generic)
 exportURL :: URL -> Text

@@ -30,13 +30,14 @@ class RenderMessage master message where
 instance RenderMessage master Text where
   renderMessage _ _ = T
 
--- | Intermediate markup type for translated content.
+-- | Intermediate markup type for translated content
 data Markup = M   (NonEmpty Markup) -- ^ combining markup
             | Em  Markup            -- ^ emphasized
             | Str Markup            -- ^ strong
             | T   Text              -- ^ plain text
 instance IsString Markup where
   fromString s = T $ toS s
+-- TODO: check if law-abiding; fast & loose?
 instance Semigroup Markup where
   M ms <> M ms' = M $ ms <> ms'
   M ms <> m     = M $ ms <> (m :| [])
@@ -47,10 +48,11 @@ instance Monoid Markup where
   mappend = (<>)
   mempty  = T mempty
 
+-- | A FromMarkup is something that can render our abstracted
+--   @Markup@ type to something else
 class FromMarkup a where
   fromMarkup :: Markup -> a
 
--- TODO escape HTML in strings
 instance FromMarkup Blaze.Html where
   fromMarkup = \case
     (M  ms) -> mconcat . NE.toList $ fmap fromMarkup ms
@@ -58,9 +60,12 @@ instance FromMarkup Blaze.Html where
     (Em  m) -> Blaze.em     $ fromMarkup m
     (Str m) -> Blaze.strong $ fromMarkup m
 
+-- | Placeholder for possible different translation contexts in the future
 data Default = Default
+-- | Enum of the supported languages
 data Lang = EN | DE
 
+-- | Map the AcceptLanguage request header to a display language
 instance FromHttpApiData Lang where
   parseHeader :: ByteString -> Either Text Lang
   parseHeader bs = note ("No Lang for '" <> toS bs <> "'.")
@@ -68,6 +73,7 @@ instance FromHttpApiData Lang where
                         , ("en", EN) ] bs
   parseUrlPiece = parseHeader . toS
 
+-- | All UI messages
 data UIMessages = Title
                 | Tagline
                 | Introduction
@@ -79,6 +85,7 @@ data UIMessages = Title
                 | TaskNextOccur
                 | CommitButton
 
+-- | UI message translation
 instance RenderMessage Default UIMessages where
   renderMessage _ EN = \case
     Title           -> "Papstehrenwort"
