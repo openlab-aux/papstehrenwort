@@ -25,6 +25,7 @@ library
                      , Papstehrenwort.Web.Html
                      , Papstehrenwort.Types
                      , Papstehrenwort.I18n
+                     , Paprtehrenwort.Database
   default-extensions:  NoImplicitPrelude, OverloadedStrings
   build-depends:       base
                      , aeson
@@ -45,6 +46,8 @@ library
                      , url
                      , time
                      , protolude
+                     , persistent
+                     , persistent-template
                      , wai
                      , warp
   default-language:    Haskell2010
