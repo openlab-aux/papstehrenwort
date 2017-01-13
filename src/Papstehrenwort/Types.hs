@@ -4,7 +4,7 @@ module Papstehrenwort.Types where
 import Protolude
 import Data.Time.Calendar (Day)
 import qualified Network.URL as U
--- import Data.Aeson (ToJSON(..), FromJSON(..))
+import Data.Aeson (ToJSON(..), FromJSON(..))
 
 
 -- | we wrap the @U.URL@ type because it works with Text
@@ -21,7 +21,7 @@ data Task = Task
   , tDescription :: Text
   , tHow :: Maybe Text
   , tUrl :: Maybe URL
-  , tRecur :: Int
+  , tRecur :: Integer
   , tStart :: Day
   } deriving (Show, Eq, Generic)
 
@@ -32,6 +32,6 @@ data Splasher = Splasher
   } deriving (Show, Eq, Generic)
 
 
--- instance ToJSON Task
--- instance ToJSON URL where
---   toJSON = toJSON . exportURL
+instance ToJSON Task
+instance ToJSON URL where
+  toJSON = toJSON . exportURL

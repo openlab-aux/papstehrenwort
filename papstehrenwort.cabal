@@ -25,7 +25,7 @@ library
                      , Papstehrenwort.Web.Html
                      , Papstehrenwort.Types
                      , Papstehrenwort.I18n
-                     , Paprtehrenwort.Database
+                     , Papstehrenwort.Database
   default-extensions:  NoImplicitPrelude, OverloadedStrings
   build-depends:       base
                      , aeson

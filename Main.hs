@@ -1,5 +1,7 @@
 module Main where
 
+import Protolude
+
 import Papstehrenwort.Web (app)
 import Network.Wai.Handler.Warp (run)
 

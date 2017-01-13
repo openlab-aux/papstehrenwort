@@ -1,8 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude, TemplateHaskell, QuasiQuotes, MultiParamTypeClasses, TypeFamilies, GADTs, GeneralizedNewtypeDeriving #-}
 module Papstehrenwort.Database
-  (
-
-  ) where
+   where
 
 import Protolude
 import Data.Time.Calendar (Day)
@@ -33,11 +31,11 @@ mkPersist sqlSettings [persistLowerCase|
 
 taskToDb :: Task -> DBTask
 taskToDb (Task tit desc how url recur start) =
-  DBTask tit desc how (toS . exportURL <$> url) recur start
+  DBTask tit desc how (toS . exportURL <$> url) (fromInteger recur) start
 
 dbToTask :: DBTask -> Task
 dbToTask (DBTask tit desc how url recur start) =
-  Task tit desc how (importURL . toS <$> url) recur start
+  Task tit desc how (importURL =<< url) (toInteger recur) start
 
 splasherToDb :: Splasher -> DBSplasher
 splasherToDb (Splasher nick mail) = DBSplasher nick mail

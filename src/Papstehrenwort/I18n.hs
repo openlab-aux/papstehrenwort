@@ -7,7 +7,6 @@ module Papstehrenwort.I18n
   ) where
 
 import Protolude
-import Control.Error (note)
 import Data.String (fromString)
 import Data.List.NonEmpty (NonEmpty((:|)), (<|))
 import qualified Data.List.NonEmpty as NE
