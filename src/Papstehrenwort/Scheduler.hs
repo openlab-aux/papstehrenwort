@@ -1,7 +1,6 @@
 {-# LANGUAGE ViewPatterns #-}
 module Papstehrenwort.Scheduler where
 
-import Protolude
 import Data.Time.Calendar (Day, diffDays, addDays)
 
 data SchedState = SchedState { _today :: Day }

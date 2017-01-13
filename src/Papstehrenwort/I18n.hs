@@ -1,4 +1,4 @@
-{-# LANGUAGE LambdaCase, MultiParamTypeClasses, FlexibleInstances, InstanceSigs #-}
+{-# LANGUAGE LambdaCase, MultiParamTypeClasses, FlexibleInstances, InstanceSigs, OverloadedStrings #-}
 module Papstehrenwort.I18n
   ( renderMessage
   , Markup(..), FromMarkup(..)

@@ -26,7 +26,6 @@ library
                      , Papstehrenwort.Types
                      , Papstehrenwort.I18n
                      , Papstehrenwort.Database
-  default-extensions:  NoImplicitPrelude, OverloadedStrings
   build-depends:       base
                      , aeson
                      , blaze-html

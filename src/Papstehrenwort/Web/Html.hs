@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances, RecordWildCards, UnicodeSyntax, Rank2Types #-}
+{-# LANGUAGE NoImplicitPrelude, OverloadedStrings, FlexibleInstances, RecordWildCards, UnicodeSyntax, Rank2Types #-}
 module Papstehrenwort.Web.Html where
 
 import Protolude as P
